@@ -1,0 +1,119 @@
+/* =========================================================================
+   COMMUNICARE — Design Tokens
+   Single source of truth. Every value below was measured from the Figma
+   reference (1.png / 2.png) so the build is pixel-faithful, not eyeballed.
+   ========================================================================= */
+
+:root {
+  /* ---------- Colour: neutrals (slate) ---------- */
+  --c-canvas:        #f8fafc;   /* app background           */
+  --c-surface:       #ffffff;   /* cards, header            */
+  --c-surface-sunk:  #f1f5f9;   /* inset / track            */
+  --c-line:          #e2e8f0;   /* hairline borders         */
+  --c-line-strong:   #cbd5e1;   /* emphasised borders       */
+  --c-ink:           #0f172a;   /* headings, primary text   */
+  --c-ink-2:         #334155;   /* body-strong              */
+  --c-ink-3:         #64748b;   /* secondary text           */
+  --c-ink-4:         #94a3b8;   /* tertiary / placeholder   */
+  --c-ink-invert:    #ffffff;
+
+  /* ---------- Colour: brand (blue) ---------- */
+  --c-primary:       #2563eb;
+  --c-primary-hover: #1d4ed8;
+  --c-primary-press: #1e40af;
+  --c-primary-soft:  #eff6ff;
+  --c-primary-soft-2:#dbeafe;
+  --c-primary-line:  #bfdbfe;
+  --c-focus:         #2563eb;
+
+  /* ---------- Colour: status ---------- */
+  --c-success:       #16a34a;   /* Speak, Online, Inside zone */
+  --c-success-dark:  #15803d;
+  --c-success-soft:  #ecfdf3;
+  --c-success-line:  #a7f3d0;
+
+  --c-warn:          #d97706;
+  --c-warn-soft:     #fffbeb;
+  --c-warn-line:     #fcd34d;
+
+  --c-danger:        #dc2626;
+  --c-danger-soft:   #fef2f2;
+
+  /* ---------- Colour: dark rail ---------- */
+  --c-rail:          #0f172a;
+  --c-rail-hover:    #1e293b;
+  --c-rail-line:     #1e293b;
+  --c-rail-ink:      #cbd5e1;
+  --c-rail-ink-dim:  #64748b;
+
+  /* ---------- Typography ---------- */
+  --font-sans: "Inter", "Segoe UI", system-ui, -apple-system,
+               "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  --font-mono: "SFMono-Regular", ui-monospace, "JetBrains Mono",
+               Menlo, Consolas, monospace;
+
+  /* Type scale — sizes in px, weights 400/500/600/700 */
+  --t-eyebrow:  13px;  /* uppercase section labels  */
+  --t-xs:       12px;  /* table headers, meta       */
+  --t-sm:       13px;
+  --t-base:     15px;  /* body, stat labels         */
+  --t-md:       16px;  /* nav, category items       */
+  --t-lg:       17px;  /* card titles               */
+  --t-xl:       19px;  /* prediction chips, TL label*/
+  --t-2xl:      22px;  /* section titles            */
+  --t-3xl:      30px;  /* page title                */
+  --t-stat:     34px;  /* stat values               */
+
+  --lh-tight:   1.2;
+  --lh-snug:     1.35;
+  --lh-normal:   1.5;
+
+  --ls-eyebrow:  0.08em;
+  --ls-tight:    -0.015em;
+
+  /* ---------- Spacing — 4px base grid ---------- */
+  --s-1:  4px;   --s-2:  8px;   --s-3:  12px;  --s-4:  16px;
+  --s-5:  20px;  --s-6:  24px;  --s-7:  32px;  --s-8:  40px;
+  --s-9:  48px;  --s-10: 64px;
+
+  /* ---------- Radii ---------- */
+  --r-xs:   6px;
+  --r-sm:   8px;
+  --r-md:   12px;
+  --r-lg:   16px;
+  --r-xl:   20px;
+  --r-pill: 999px;
+
+  /* ---------- Elevation — deliberately subtle; the design leans on
+                 hairlines rather than shadows ---------- */
+  --e-1: 0 1px 2px rgba(15, 23, 42, 0.05);
+  --e-2: 0 1px 3px rgba(15, 23, 42, 0.07), 0 1px 2px rgba(15, 23, 42, 0.04);
+  --e-3: 0 10px 24px -8px rgba(15, 23, 42, 0.16),
+        0 4px 8px -4px rgba(15, 23, 42, 0.08);
+  --e-4: 0 24px 56px -16px rgba(15, 23, 42, 0.26);
+  --ring: 0 0 0 3px rgba(37, 99, 235, 0.32);
+
+  /* ---------- Motion ---------- */
+  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --t-fast: 110ms;
+  --t-base: 170ms;
+  --t-slow: 280ms;
+
+  /* ---------- Layout skeleton (measured) ---------- */
+  --shell-max:  1554px;   /* board content  135 → 1689 */
+  --gutter:     24px;
+  --topbar-h:   81px;     /* header height incl. border */
+
+  --rail-w:     293px;    /* board category rail */
+  --rail-gap:   23px;
+
+  --portal-rail-w: 261px;
+  --portal-pad:    37px;
+
+  /* Grid density presets — Task 2 */
+  --cols:  4;            /* Youth default, matches 2.png */
+  --gap:   20px;
+  --card-h: 174px;
+  --sym:   76px;         /* illustration size */
+}

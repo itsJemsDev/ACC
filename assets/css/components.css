@@ -1,0 +1,435 @@
+/* =========================================================================
+   COMMUNICARE — Component library
+   Buttons · Pills · Cards · Segmented control · Table · Modal · Keypad
+   ========================================================================= */
+
+/* ---------------------------------------------------------------- Card -- */
+.card {
+  background: var(--c-surface);
+  border: 1px solid var(--c-line);
+  border-radius: var(--r-lg);
+  box-shadow: var(--e-1);
+}
+.card__head {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  padding: var(--s-5) var(--s-6) 0;
+}
+.card__title {
+  font-size: var(--t-lg);
+  font-weight: 600;
+  letter-spacing: var(--ls-tight);
+  color: var(--c-ink);
+}
+.card__body { padding: var(--s-5) var(--s-6) var(--s-6); }
+.card__rule {
+  height: 1px;
+  background: var(--c-line);
+  border: 0;
+  margin: var(--s-5) 0 0;
+}
+
+/* -------------------------------------------------------------- Button -- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-2);
+  height: 52px;
+  padding: 0 var(--s-5);
+  border-radius: var(--r-md);
+  border: 1px solid var(--c-line);
+  background: var(--c-surface);
+  color: var(--c-ink);
+  font-size: var(--t-md);
+  font-weight: 600;
+  letter-spacing: var(--ls-tight);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background var(--t-fast) var(--ease),
+              border-color var(--t-fast) var(--ease),
+              color var(--t-fast) var(--ease),
+              transform var(--t-fast) var(--ease),
+              box-shadow var(--t-fast) var(--ease);
+}
+.btn:hover:not(:disabled) { background: var(--c-surface-sunk); border-color: var(--c-line-strong); }
+.btn:active:not(:disabled) { transform: translateY(1px); }
+.btn:disabled { opacity: 0.42; cursor: not-allowed; }
+.btn svg { width: 20px; height: 20px; flex: none; }
+
+.btn--primary {
+  background: var(--c-primary);
+  border-color: var(--c-primary);
+  color: var(--c-ink-invert);
+}
+.btn--primary:hover:not(:disabled) { background: var(--c-primary-hover); border-color: var(--c-primary-hover); }
+.btn--primary:active:not(:disabled) { background: var(--c-primary-press); }
+
+.btn--success {
+  background: var(--c-success);
+  border-color: var(--c-success);
+  color: var(--c-ink-invert);
+}
+.btn--success:hover:not(:disabled) { background: var(--c-success-dark); border-color: var(--c-success-dark); }
+
+.btn--ghost { background: transparent; border-color: transparent; color: var(--c-ink-3); }
+.btn--ghost:hover:not(:disabled) { background: var(--c-surface-sunk); color: var(--c-ink); }
+
+.btn--sm { height: 36px; padding: 0 var(--s-3); font-size: var(--t-base); border-radius: var(--r-sm); }
+.btn--sm svg { width: 16px; height: 16px; }
+.btn--icon { width: 52px; padding: 0; }
+.btn--icon.btn--sm { width: 36px; }
+
+/* ---------------------------------------------------------------- Pill -- */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  height: 32px;
+  padding: 0 var(--s-3);
+  border-radius: var(--r-pill);
+  border: 1px solid var(--c-line);
+  background: var(--c-surface);
+  font-size: var(--t-sm);
+  font-weight: 600;
+  color: var(--c-ink-2);
+  white-space: nowrap;
+}
+.pill svg { width: 14px; height: 14px; flex: none; }
+.pill__dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; flex: none; }
+
+.pill--success { background: var(--c-success-soft); border-color: var(--c-success-line); color: var(--c-success-dark); }
+.pill--warn    { background: var(--c-warn-soft);    border-color: var(--c-warn-line);    color: var(--c-warn); }
+.pill--info    { background: var(--c-primary-soft);  border-color: var(--c-primary-line); color: var(--c-primary); }
+.pill--muted   { background: var(--c-surface-sunk);  border-color: var(--c-line);         color: var(--c-ink-3); }
+
+/* --------------------------------------------------------------- Badge -- */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  height: 28px;
+  padding: 0 var(--s-3);
+  border-radius: var(--r-pill);
+  background: var(--c-primary-soft);
+  border: 1px solid var(--c-primary-line);
+  color: var(--c-primary);
+  font-size: var(--t-xs);
+  font-weight: 700;
+  letter-spacing: var(--ls-eyebrow);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* --------------------------------------------- Segmented control (EN/TL) -- */
+.segment {
+  display: inline-flex;
+  padding: 3px;
+  height: 48px;
+  border: 1px solid var(--c-line);
+  border-radius: var(--r-md);
+  background: var(--c-surface);
+  flex: none;
+}
+.segment__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 112px;
+  padding: 0 var(--s-4);
+  border-radius: 9px;
+  font-size: var(--t-md);
+  font-weight: 600;
+  letter-spacing: var(--ls-tight);
+  color: var(--c-ink-3);
+  transition: background var(--t-fast) var(--ease),
+              color var(--t-fast) var(--ease);
+}
+.segment__btn:hover { color: var(--c-ink); background: var(--c-surface-sunk); }
+.segment__btn[aria-pressed="true"] {
+  background: var(--c-primary);
+  color: var(--c-ink-invert);
+}
+.segment__btn[aria-pressed="true"]:hover { background: var(--c-primary-hover); }
+
+/* --------------------------------------------------------------- Table -- */
+.tbl { font-size: var(--t-base); }
+.tbl thead th {
+  text-align: left;
+  padding: var(--s-3) var(--s-3);
+  font-size: var(--t-xs);
+  font-weight: 600;
+  letter-spacing: var(--ls-eyebrow);
+  text-transform: uppercase;
+  color: var(--c-ink-3);
+  border-bottom: 1px solid var(--c-line);
+  white-space: nowrap;
+}
+.tbl tbody td {
+  padding: var(--s-3) var(--s-3);
+  color: var(--c-ink-2);
+  border-bottom: 1px solid var(--c-line);
+  vertical-align: middle;
+}
+.tbl tbody tr:last-child td { border-bottom: 0; }
+.tbl tbody tr:hover { background: var(--c-canvas); }
+.tbl td:first-child, .tbl th:first-child { padding-left: 0; }
+.tbl td:last-child,  .tbl th:last-child  { padding-right: 0; }
+
+/* Avatar / identity cell */
+.who { display: flex; align-items: center; gap: var(--s-3); }
+.who__av {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  display: grid; place-items: center;
+  background: var(--c-primary-soft);
+  color: var(--c-primary);
+  font-weight: 700; font-size: var(--t-sm);
+  flex: none;
+}
+.who__name { font-weight: 600; color: var(--c-ink); }
+.who__sub  { font-size: var(--t-xs); color: var(--c-ink-3); }
+
+/* --------------------------------------------------------------- Modal -- */
+.scrim {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(3px);
+  display: grid;
+  place-items: center;
+  padding: var(--s-5);
+  z-index: 90;
+  animation: fade var(--t-base) var(--ease) both;
+}
+.modal {
+  width: 100%;
+  max-width: 400px;
+  background: var(--c-surface);
+  border-radius: var(--r-xl);
+  box-shadow: var(--e-4);
+  padding: var(--s-7);
+  animation: pop var(--t-slow) var(--ease-out) both;
+}
+.modal__title { font-size: var(--t-2xl); font-weight: 700; letter-spacing: var(--ls-tight); }
+.modal__sub { margin-top: var(--s-2); font-size: var(--t-base); color: var(--c-ink-3); }
+.modal__foot { margin-top: var(--s-6); display: flex; gap: var(--s-3); justify-content: flex-end; }
+
+@keyframes fade { from { opacity: 0 } to { opacity: 1 } }
+@keyframes pop  { from { opacity: 0; transform: translateY(10px) scale(.985) } to { opacity: 1; transform: none } }
+
+/* -------------------------------------------------------------- Keypad -- */
+.keypad { margin-top: var(--s-6); }
+.keypad__dots { display: flex; justify-content: center; gap: var(--s-4); margin-bottom: var(--s-6); }
+.keypad__dot {
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  border: 2px solid var(--c-line-strong);
+  background: transparent;
+  transition: background var(--t-fast) var(--ease),
+              border-color var(--t-fast) var(--ease),
+              transform var(--t-fast) var(--ease);
+}
+.keypad__dot.is-on { background: var(--c-primary); border-color: var(--c-primary); }
+.keypad.is-error .keypad__dot { border-color: var(--c-danger); }
+.keypad.is-error .keypad__dots { animation: shake 380ms var(--ease); }
+
+.keypad__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--s-3);
+}
+.key {
+  height: 66px;
+  border-radius: var(--r-md);
+  border: 1px solid var(--c-line);
+  background: var(--c-surface);
+  font-size: var(--t-2xl);
+  font-weight: 600;
+  color: var(--c-ink);
+  display: grid;
+  place-items: center;
+  transition: background var(--t-fast) var(--ease),
+              transform var(--t-fast) var(--ease);
+}
+.key:hover { background: var(--c-surface-sunk); }
+.key:active { transform: translateY(1px); background: var(--c-primary-soft); }
+.key--fn { background: var(--c-canvas); }
+.key--fn:hover { background: var(--c-surface-sunk); }
+.key--fn svg { width: 22px; height: 22px; color: var(--c-ink-3); }
+.key--go { background: var(--c-primary); border-color: var(--c-primary); color: #fff; }
+.key--go:hover { background: var(--c-primary-hover); }
+
+@keyframes shake {
+  0%,100% { transform: translateX(0) }
+  20% { transform: translateX(-7px) }
+  40% { transform: translateX(6px) }
+  60% { transform: translateX(-4px) }
+  80% { transform: translateX(3px) }
+}
+
+/* --------------------------------------------------------------- Field -- */
+.field { display: block; margin-bottom: var(--s-5); }
+.field__label {
+  display: block;
+  font-size: var(--t-sm);
+  font-weight: 600;
+  color: var(--c-ink-2);
+  margin-bottom: var(--s-2);
+}
+.field__hint { font-size: var(--t-xs); color: var(--c-ink-3); margin-top: var(--s-2); }
+.input, .select, .textarea {
+  width: 100%;
+  height: 46px;
+  padding: 0 var(--s-3);
+  border: 1px solid var(--c-line-strong);
+  border-radius: var(--r-sm);
+  background: var(--c-surface);
+  font-size: var(--t-base);
+  transition: border-color var(--t-fast) var(--ease), box-shadow var(--t-fast) var(--ease);
+}
+.textarea { height: auto; padding: var(--s-3); resize: vertical; min-height: 88px; }
+.input:hover, .select:hover, .textarea:hover { border-color: var(--c-ink-4); }
+.input:focus, .select:focus, .textarea:focus {
+  border-color: var(--c-primary);
+  box-shadow: var(--ring);
+  outline: none;
+}
+.input::placeholder, .textarea::placeholder { color: var(--c-ink-4); }
+
+.select {
+  appearance: none;
+  padding-right: var(--s-8);
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round'><path d='M6 8l4 4 4-4'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right var(--s-3) center;
+  background-size: 18px;
+  cursor: pointer;
+}
+
+/* Choice cards — used for age group / density pickers */
+.choices { display: grid; gap: var(--s-3); }
+.choice {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s-3);
+  padding: var(--s-4);
+  border: 1px solid var(--c-line-strong);
+  border-radius: var(--r-md);
+  background: var(--c-surface);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color var(--t-fast) var(--ease),
+              background var(--t-fast) var(--ease),
+              box-shadow var(--t-fast) var(--ease);
+}
+.choice:hover { border-color: var(--c-primary-line); background: var(--c-primary-soft); }
+.choice[aria-pressed="true"] {
+  border-color: var(--c-primary);
+  background: var(--c-primary-soft);
+  box-shadow: inset 0 0 0 1px var(--c-primary);
+}
+.choice__mark {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  border: 2px solid var(--c-line-strong);
+  flex: none;
+  margin-top: 1px;
+  display: grid;
+  place-items: center;
+  transition: border-color var(--t-fast) var(--ease);
+}
+.choice[aria-pressed="true"] .choice__mark { border-color: var(--c-primary); }
+.choice__mark::after {
+  content: "";
+  width: 11px; height: 11px;
+  border-radius: 50%;
+  background: var(--c-primary);
+  transform: scale(0);
+  transition: transform var(--t-base) var(--ease-out);
+}
+.choice[aria-pressed="true"] .choice__mark::after { transform: scale(1); }
+.choice__t { font-weight: 600; color: var(--c-ink); }
+.choice__d { font-size: var(--t-sm); color: var(--c-ink-3); margin-top: 2px; }
+
+/* Switch */
+.switch { display: inline-flex; align-items: center; gap: var(--s-3); cursor: pointer; }
+.switch__track {
+  width: 48px; height: 28px;
+  border-radius: var(--r-pill);
+  background: var(--c-line-strong);
+  padding: 3px;
+  transition: background var(--t-base) var(--ease);
+  flex: none;
+}
+.switch__knob {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: var(--e-1);
+  transition: transform var(--t-base) var(--ease-out);
+}
+.switch input { position: absolute; opacity: 0; pointer-events: none; }
+.switch input:checked + .switch__track { background: var(--c-primary); }
+.switch input:checked + .switch__track .switch__knob { transform: translateX(20px); }
+.switch input:focus-visible + .switch__track { box-shadow: var(--ring); }
+
+/* --------------------------------------------- Geofence / location list --
+   Shared by the caregiver portal's Geofencing screen and the board's
+   location-context picker.                                            */
+.geolist { display: grid; gap: var(--s-3); }
+.geoitem {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--s-4);
+  width: 100%;
+  padding: var(--s-4);
+  border: 1px solid var(--c-line);
+  border-radius: var(--r-md);
+  background: var(--c-surface);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color var(--t-fast) var(--ease), background var(--t-fast) var(--ease);
+}
+.geoitem:hover { border-color: var(--c-primary-line); }
+.geoitem.is-on { border-color: var(--c-success-line); background: var(--c-success-soft); }
+.geoitem__ic {
+  width: 44px; height: 44px; border-radius: 50%;
+  display: grid; place-items: center;
+  background: var(--c-primary-soft); color: var(--c-primary);
+  flex: none;
+}
+.geoitem__ic svg { width: 22px; height: 22px; }
+.geoitem__t { display: block; font-weight: 600; }
+.geoitem__d { display: block; font-size: var(--t-sm); color: var(--c-ink-3); margin-top: 2px; }
+.geoitem__toggles { display: flex; gap: var(--s-5); align-items: center; }
+
+/* ------------------------------------------------------------- Toaster -- */
+.toasts {
+  position: fixed;
+  left: 50%;
+  bottom: var(--s-7);
+  transform: translateX(-50%);
+  display: grid;
+  gap: var(--s-2);
+  z-index: 120;
+  pointer-events: none;
+}
+.toast {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  padding: var(--s-3) var(--s-5);
+  border-radius: var(--r-pill);
+  background: var(--c-rail);
+  color: #fff;
+  font-size: var(--t-base);
+  font-weight: 500;
+  box-shadow: var(--e-3);
+  animation: toastIn var(--t-slow) var(--ease-out) both;
+}
+.toast svg { width: 18px; height: 18px; }
+.toast.is-out { animation: toastOut var(--t-base) var(--ease) both; }
+@keyframes toastIn  { from { opacity:0; transform: translateY(14px) } to { opacity:1; transform:none } }
+@keyframes toastOut { to   { opacity:0; transform: translateY(8px) } }

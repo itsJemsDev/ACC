@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>COMMUNICARE — Communication Board</title>
+<meta name="description" content="Accessible AAC communication board with phrase strip, next-word prediction and bilingual Tagalog/English vocabulary.">
+<meta name="theme-color" content="#ffffff">
+
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%232563eb'/><path d='M9 12h14M9 16h14M9 20h9' stroke='white' stroke-width='2.6' stroke-linecap='round'/></svg>">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+
+<link rel="stylesheet" href="assets/css/tokens.css">
+<link rel="stylesheet" href="assets/css/base.css">
+<link rel="stylesheet" href="assets/css/components.css">
+<link rel="stylesheet" href="assets/css/board.css">
+</head>
+
+<body data-age="youth">
+
+<a href="#board-grid" class="u-sr">Skip to symbol grid</a>
+
+<!-- ══════════════════════════════════════════════════ Top navigation ══ -->
+<header class="topbar">
+  <div class="topbar__in">
+
+    <a class="brand" href="index.html" aria-label="COMMUNICARE home">
+      <span class="brand__mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
+          <path d="M7 8h10M7 12h10M7 16h6"/>
+        </svg>
+      </span>
+      <span class="brand__name">COMMUNICARE</span>
+    </a>
+
+    <span class="topbar__spacer"></span>
+
+    <div class="topbar__tools">
+      <!-- Global control: active location / routine context -->
+      <button class="ctx" id="btn-ctx" title="Change location context">
+        <span id="ctx-ico"></span>
+        <span id="ctx-label">School</span>
+        <span class="ctx__meta" id="ctx-meta">Morning</span>
+      </button>
+
+      <!-- Global control: Tagalog / English toggle -->
+      <div class="segment" role="group" aria-label="Language">
+        <button class="segment__btn" id="lang-en" aria-pressed="true" lang="en">English</button>
+        <button class="segment__btn" id="lang-tl" aria-pressed="false" lang="fil">Tagalog</button>
+      </div>
+
+      <!-- Caregiver settings entry, gated by PIN -->
+      <button class="lockbtn" id="btn-lock" title="Caregiver settings" aria-label="Caregiver settings"></button>
+    </div>
+
+  </div>
+</header>
+
+<!-- ═══════════════════════════════════════════════════════ Board ══ -->
+<div class="shell">
+  <div class="board">
+
+    <!-- ─────────────────────────────────── Category rail ── -->
+    <nav class="rail" id="rail" aria-label="Vocabulary categories"></nav>
+
+    <!-- ─────────────────────────────────── Main column ── -->
+    <main class="main">
+
+      <!-- Action toolbar -->
+      <div class="toolbar">
+        <button class="btn" id="btn-back" aria-label="Backspace — remove last symbol"></button>
+        <button class="btn" id="btn-clear" aria-label="Clear the whole phrase"></button>
+        <button class="btn btn--success" id="btn-speak" aria-label="Speak the phrase aloud"></button>
+      </div>
+
+      <!-- Visual phrase strip -->
+      <section class="strip" aria-label="Phrase builder">
+        <div class="strip__slots" id="strip-slots" aria-live="polite"></div>
+      </section>
+
+      <!-- Dynamic Top-5 prediction bar — deliberately tinted so it never
+           reads as part of the main vocabulary grid -->
+      <section class="predict" aria-label="Suggested next words">
+        <div class="predict__head">
+          <span id="predict-ico" aria-hidden="true"></span>
+          <span class="u-eyebrow">Suggestions</span>
+        </div>
+        <div class="predict__row" id="predict-row"></div>
+      </section>
+
+      <!-- Main vocabulary board -->
+      <div class="gridwrap">
+        <h2 class="u-sr">Symbol grid</h2>
+        <div class="board__grid" id="board-grid"></div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ Overlays ══ -->
+<div class="toasts" id="toasts" aria-live="polite" aria-atomic="true"></div>
+<div id="ctx-root"></div>
+<div id="pin-root"></div>
+
+<script src="assets/js/symbols.js"></script>
+<script src="assets/js/store.js"></script>
+<script src="assets/js/speech.js"></script>
+<script src="assets/js/predict.js"></script>
+<script src="assets/js/pin.js"></script>
+<script src="assets/js/board.js"></script>
+<script>
+  /* Inline the icon markup that lives in JS so there is no render flash. */
+  document.getElementById('ctx-ico').innerHTML  = CC.UI.pin;
+  document.getElementById('predict-ico').innerHTML = CC.UI.spark;
+  document.getElementById('btn-back').innerHTML  = CC.UI.backspace + '<span>Backspace</span>';
+  document.getElementById('btn-clear').innerHTML = CC.UI.trash + '<span>Clear</span>';
+  document.getElementById('btn-speak').innerHTML = CC.UI.speaker + '<span>Speak</span>';
+  document.getElementById('btn-lock').innerHTML = CC.UI.lock;
+  CC.Board.init();
+</script>
+</body>
+</html>

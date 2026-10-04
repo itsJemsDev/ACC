@@ -1,0 +1,428 @@
+/* =========================================================================
+   COMMUNICARE — AAC Board (2.png)
+   ========================================================================= */
+
+/* --------------------------------------------------------------- Topbar -- */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  height: var(--topbar-h);
+  background: var(--c-surface);
+  border-bottom: 1px solid var(--c-line);
+}
+.topbar__in {
+  height: 100%;
+  /* max-width includes the gutters so that, on wide viewports, the
+     container's centring *is* the gutter — reproducing the mockup's
+     exact 1554px content column. Narrow viewports fall back to 24px. */
+  width: 100%;
+  max-width: calc(var(--shell-max) + var(--gutter) * 2);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+}
+.brand { display: flex; align-items: center; gap: var(--s-3); }
+.brand__mark {
+  width: 34px; height: 34px;
+  border-radius: 10px;
+  background: var(--c-primary);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  flex: none;
+  box-shadow: var(--e-1);
+}
+.brand__mark svg { width: 20px; height: 20px; }
+.brand__name {
+  font-size: var(--t-xl);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--c-ink);
+}
+.topbar__spacer { flex: 1; }
+
+.topbar__tools { display: flex; align-items: center; gap: var(--s-3); }
+
+/* Active context chip — e.g. "📍 School" */
+.ctx {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  height: 48px;
+  padding: 0 var(--s-4);
+  border-radius: var(--r-md);
+  background: var(--c-primary-soft);
+  border: 1px solid var(--c-primary-line);
+  font-size: var(--t-md);
+  font-weight: 600;
+  color: var(--c-primary);
+  cursor: pointer;
+  transition: background var(--t-fast) var(--ease);
+}
+.ctx:hover { background: var(--c-primary-soft-2); }
+.ctx svg { width: 20px; height: 20px; flex: none; }
+.ctx__meta {
+  font-size: var(--t-xs);
+  font-weight: 600;
+  color: var(--c-ink-3);
+  padding-left: var(--s-2);
+  border-left: 1px solid var(--c-primary-line);
+}
+
+/* Lock button (caregiver settings) */
+.lockbtn {
+  width: 48px; height: 48px;
+  display: grid; place-items: center;
+  border-radius: var(--r-md);
+  border: 1px solid var(--c-line);
+  background: var(--c-surface);
+  color: var(--c-ink-3);
+  transition: background var(--t-fast) var(--ease), color var(--t-fast) var(--ease);
+}
+.lockbtn:hover { background: var(--c-surface-sunk); color: var(--c-ink); }
+.lockbtn svg { width: 22px; height: 22px; }
+
+/* ---------------------------------------------------------------- Shell -- */
+.shell {
+  width: 100%;
+  max-width: calc(var(--shell-max) + var(--gutter) * 2);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+.board {
+  display: grid;
+  grid-template-columns: var(--rail-w) minmax(0, 1fr);
+  gap: var(--rail-gap);
+  padding-top: var(--s-6);
+  padding-bottom: var(--s-7);
+  align-items: start;
+}
+
+/* ------------------------------------------------------ Category rail -- */
+.rail {
+  background: var(--c-surface);
+  border: 1px solid var(--c-line);
+  border-radius: var(--r-lg);
+  box-shadow: var(--e-1);
+  padding: var(--s-3) 0 var(--s-4);
+  position: sticky;
+  top: calc(var(--topbar-h) + var(--s-6));
+}
+.rail__head { padding: var(--s-2) var(--s-6) var(--s-3); }
+.rail__list { display: grid; gap: var(--s-2); }
+
+.cat {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  height: 60px;
+  padding: 0 var(--s-6);
+  font-size: var(--t-md);
+  font-weight: 600;
+  letter-spacing: var(--ls-tight);
+  color: var(--c-ink-2);
+  text-align: left;
+  transition: background var(--t-fast) var(--ease), color var(--t-fast) var(--ease);
+}
+.cat svg { width: 26px; height: 26px; flex: none; }
+.cat__n {
+  margin-left: auto;
+  font-size: var(--t-xs);
+  font-weight: 600;
+  color: var(--c-ink-4);
+  font-variant-numeric: tabular-nums;
+}
+.cat:hover { background: var(--c-canvas); }
+.cat[aria-current="true"] {
+  background: var(--c-primary);
+  color: #fff;
+}
+.cat[aria-current="true"] .cat__n { color: rgba(255, 255, 255, 0.72); }
+.cat[aria-current="true"] svg { color: #fff; }
+
+/* --------------------------------------------------------- Main column -- */
+.main { display: flex; flex-direction: column; min-width: 0; }
+
+/* Toolbar: Backspace / Clear / Speak */
+.toolbar {
+  margin-top: var(--s-7);
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--s-5);
+}
+.toolbar .btn { min-width: 118px; }
+.toolbar .btn--icon { min-width: 0; }
+.toolbar .btn--success { min-width: 181px; }
+
+/* Phrase strip */
+.strip {
+  margin-top: var(--s-6);
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+  min-height: 78px;
+  padding: var(--s-3) var(--s-4);
+  background: var(--c-surface);
+  border: 1px solid var(--c-line);
+  border-radius: var(--r-lg);
+  box-shadow: var(--e-1);
+}
+.strip__slots {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  flex: 1;
+  min-width: 0;
+  overflow-x: auto;
+  padding: var(--s-1);
+  scrollbar-width: none;
+}
+.strip__slots::-webkit-scrollbar { display: none; }
+.strip__empty {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  color: var(--c-ink-4);
+  font-size: var(--t-md);
+  padding-left: var(--s-3);
+}
+.strip__empty svg { width: 24px; height: 24px; flex: none; }
+
+.slot {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-3);
+  height: 52px;
+  padding: 0 var(--s-4);
+  border: 1px solid var(--c-primary-line);
+  background: var(--c-primary-soft);
+  border-radius: var(--r-md);
+  font-size: var(--t-lg);
+  font-weight: 600;
+  letter-spacing: var(--ls-tight);
+  color: var(--c-primary);
+  flex: none;
+  animation: slotIn var(--t-slow) var(--ease-out) both;
+  cursor: default;
+}
+.slot svg { width: 32px; height: 32px; flex: none; }
+.slot__i {
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: var(--c-primary);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  display: grid; place-items: center;
+  flex: none;
+}
+.slot.is-out { animation: slotOut var(--t-base) var(--ease) both; }
+@keyframes slotIn  { from { opacity:0; transform: translateY(6px) scale(.96) } to { opacity:1; transform:none } }
+@keyframes slotOut { to   { opacity:0; transform: translateY(-6px) scale(.96) } }
+
+/* Prediction bar — visually distinct from the grid (blue tint) and
+   edge-flush so its five chips span the full column, matching the mockup. */
+.predict {
+  margin-top: var(--s-9);
+  padding: var(--s-6) 0 var(--s-5);
+  background: var(--c-primary-soft);
+  border: 1px solid var(--c-primary-line);
+  border-radius: var(--r-lg);
+}
+.predict__head {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  padding: 0 var(--s-4) 0 2px;
+  margin-bottom: var(--s-4);
+  color: var(--c-primary);
+}
+.predict__head svg { width: 16px; height: 16px; }
+.predict__row {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: var(--s-3);
+}
+.chip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-2);
+  height: 74px;
+  padding: 0 var(--s-3);
+  border-radius: var(--r-md);
+  background: var(--c-surface);
+  border: 1px solid var(--c-primary-line);
+  font-size: var(--t-xl);
+  font-weight: 600;
+  letter-spacing: var(--ls-tight);
+  color: var(--c-ink);
+  text-align: center;
+  cursor: pointer;
+  transition: transform var(--t-fast) var(--ease),
+              box-shadow var(--t-fast) var(--ease),
+              border-color var(--t-fast) var(--ease);
+}
+.chip svg { width: 30px; height: 30px; flex: none; }
+.chip:hover {
+  transform: translateY(-2px);
+  border-color: var(--c-primary);
+  box-shadow: var(--e-2);
+}
+.chip:active { transform: translateY(0); }
+
+/* -------------------------------------------------------- Symbol grid -- */
+.gridwrap { margin-top: var(--s-2); }
+.board__grid {
+  display: grid;
+  grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
+  gap: var(--gap);
+}
+.sym {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--s-2);
+  /* 294x174 is the card proportion measured off 2.png. Deriving the height
+     from the column width keeps the silhouette identical when --cols changes
+     (a 3-col Early card would otherwise stretch to a flat 2:1). --card-h then
+     acts as the floor for narrow screens, where a squarer, bigger target is
+     the better trade. */
+  aspect-ratio: 294 / 174;
+  min-height: var(--card-h);
+  /* aspect-ratio + an auto block size suppresses stretch in the inline axis,
+     which would otherwise drop the card back to min-height x ratio (294px)
+     and blow out the track. An explicit percentage width makes the inline
+     size definite, so the ratio reads from the track instead. */
+  width: 100%;
+  padding: var(--s-4) var(--s-2) var(--s-4);
+  background: var(--c-surface);
+  border: 1px solid var(--c-line);
+  border-radius: var(--r-lg);
+  box-shadow: var(--e-1);
+  cursor: pointer;
+  transition: transform var(--t-fast) var(--ease),
+              box-shadow var(--t-fast) var(--ease),
+              border-color var(--t-fast) var(--ease);
+}
+.sym:hover {
+  transform: translateY(-3px);
+  border-color: var(--c-primary-line);
+  box-shadow: var(--e-3);
+}
+.sym:active { transform: translateY(-1px); border-color: var(--c-primary); }
+.sym.is-picked { border-color: var(--c-primary); background: var(--c-primary-soft); }
+
+.sym__art {
+  flex: 1;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  min-height: 0;
+}
+.sym__art svg {
+  width: var(--sym);
+  height: var(--sym);
+  transition: transform var(--t-base) var(--ease-out);
+}
+.sym:hover .sym__art svg { transform: scale(1.05); }
+.sym__l1 {
+  font-size: var(--t-xl);
+  font-weight: 600;
+  letter-spacing: var(--ls-tight);
+  color: var(--c-ink);
+  line-height: var(--lh-tight);
+  text-align: center;
+  max-width: 100%;
+}
+.sym__l2 {
+  font-size: var(--t-base);
+  font-weight: 500;
+  color: var(--c-ink-3);
+  line-height: var(--lh-tight);
+  text-align: center;
+  max-width: 100%;
+}
+
+.grid__empty {
+  padding: var(--s-9);
+  text-align: center;
+  color: var(--c-ink-3);
+}
+
+/* --------------------------------------------------------- Age presets -- */
+/* Task 2 — density presets driven by --cols / --sym from tokens.
+   Only override --gap where it actually differs; never alias it to itself
+   (a self-referential custom property is an invalid cycle and would reset
+   the grid gap to 0).                                              */
+body[data-age="early"] { --cols: 3; --sym: 104px; --card-h: 196px; --gap: var(--s-5); }
+body[data-age="youth"] { --cols: 4; --sym: 76px;  --card-h: 174px; }
+body[data-age="adult"] { --cols: 5; --sym: 60px;  --card-h: 148px; --gap: var(--s-3); }
+
+/* ---------------------------------------------------------- Responsive -- */
+@media (max-width: 1280px) {
+  :root { --rail-w: 250px; }
+  body[data-age="adult"] { --cols: 4; }
+}
+@media (max-width: 1040px) {
+  /* minmax(0, …) not a bare 1fr: `1fr` floors at the rail's min-content
+     width, and the rail's min-content is the sum of eight max-content
+     category buttons — which pushed the whole page into horizontal scroll. */
+  .board { grid-template-columns: minmax(0, 1fr); }
+  .rail { position: static; min-width: 0; }
+  .rail__list {
+    grid-auto-flow: column;
+    grid-auto-columns: max-content;
+    overflow-x: auto;
+    padding: 0 var(--s-4) var(--s-2);
+  }
+  .cat { height: 52px; }
+  body[data-age="early"] { --cols: 3; }
+  body[data-age="youth"] { --cols: 3; }
+  body[data-age="adult"] { --cols: 3; }
+  .predict__row { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .toolbar { margin-top: 0; }
+}
+@media (max-width: 720px) {
+  .topbar__in { flex-wrap: wrap; height: auto; padding-block: var(--s-3); gap: var(--s-2); }
+  .topbar { position: static; }
+  .brand__name { font-size: var(--t-lg); }
+  .topbar__tools { min-width: 0; gap: var(--s-2); }
+  .segment { height: 42px; }
+  .segment__btn { min-width: 72px; font-size: var(--t-base); }
+  .ctx { height: 42px; padding: 0 var(--s-3); min-width: 0; }
+  #ctx-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  /* the secondary time-of-day label is the first thing to go when the
+     controls have to share a phone-width row with the brand and lock */
+  .ctx__meta { display: none; }
+  .lockbtn { width: 42px; height: 42px; flex: none; }
+  .toolbar { flex-wrap: wrap; gap: var(--s-3); }
+  .toolbar .btn { flex: 1; min-width: 0; }
+  .predict__row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  body[data-age="early"] { --cols: 2; --sym: 84px; }
+  body[data-age="youth"] { --cols: 2; --sym: 72px; }
+  body[data-age="adult"] { --cols: 2; --sym: 64px; }
+}
+
+/* Screen-reader-only live region for spoken feedback */
+.sr-live {
+  position: absolute; width: 1px; height: 1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap;
+}
+
+/* --- Speak button, mid-utterance ------------------------------------- */
+.btn.is-busy { pointer-events: none; position: relative; overflow: hidden; }
+.btn.is-busy::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.28), transparent);
+  animation: sheen 1.1s var(--ease) infinite;
+}
+.btn.is-busy svg { animation: pulse 900ms var(--ease) infinite alternate; }
+@keyframes sheen { from { transform: translateX(-100%) } to { transform: translateX(100%) } }
+@keyframes pulse { from { opacity: 1 } to { opacity: 0.55 } }

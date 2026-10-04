@@ -1,0 +1,45 @@
+Task 1: Primary AAC Board & Symbol Grid System
+●​ Goal: Design an accessible, low-friction communication board layout optimized for tablet and
+mobile touchscreens.
+●​ Key Elements to Include:
+○​ Visual Phrase Strip (Top): Slot container displaying selected picture symbols
+sequentially, complete with clear action buttons: Speak (Play), Backspace, and Clear
+All.
+○​ Dynamic Top-5 Prediction Bar: A high-visibility horizontal strip directly above the grid
+that highlights the top 5 predicted next words. Must look visually distinct from the main
+grid.
+○​ Main Vocabulary Board: A clean grid layout with large touch targets. Icons must
+feature a clear picture illustration with the text label positioned below it.
+○​ Global Controls Bar: Compact top navigation bar containing the Tagalog / English
+Toggle Switch and a subtle Caregiver Settings Button.
+
+Task 2: Responsive Age-Adaptive Grid Layouts
+●​ Goal: Create three visual density presets that adjust automatically based on user age profiles.
+●​ Grid Layout Presets:
+○​ Early Childhood (Ages 3–8): 2 x 3 or 3 x 3 grid (large icons, minimal visual clutter).
+○​ Youth / Adolescents (Ages 9–17): 3 x 4 or 4 x 5 grid.
+○​ Adults (Ages 18+):4 x 6 or 5 x 6 grid (compact icons for dense vocabulary).
+Task 3: PIN Security Overlay & Caregiver Portal
+●​ Goal: Design the administrative dashboard interface to feel separate from the primary AAC board
+while keeping navigation simple for parents and teachers.
+●​ Key Screens to Design:
+○​ PIN Keypad Modal: Simple 4-digit security numpad overlay to prevent accidental
+access by non-verbal users.
+○​ Age & Profile Settings Screen: Controls for selecting age groups and setting initial grid
+density defaults.
+○​ Custom Vocabulary Uploader: Simple form interface to upload a new image, enter
+Tagalog/English labels, assign a category, and save to the local board.
+○​ Geofence & Location Context Manager: Visual map selector or drop-down list to
+configure GPS locations (e.g., Home, School, Therapy Clinic) and time-of-day routine
+rules.
+Task 4: Design System & Visual Assets
+●​ Goal: Establish consistent typography, colors, and asset guidelines.
+●​ Deliverables:
+○​ Color Palette: Accessible, high-contrast color scheme (friendly and clear, avoiding
+overly child-like themes for adult users).
+○​ Typography: Clear, highly legible sans-serif font
+
+○​ Symbol Style Guide: Guidelines for picture communication symbols (consistent line
+thickness, flat illustrations, and neutral backgrounds).
+
+

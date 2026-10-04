@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>COMMUNICARE — Caregiver Portal</title>
+<meta name="description" content="Caregiver dashboard for the COMMUNICARE AAC board: performance, profile settings, vocabulary uploads, geofencing and analytics.">
+<meta name="theme-color" content="#0f172a">
+<meta name="robots" content="noindex">
+
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%230f172a'/><path d='M9 12h14M9 16h14M9 20h9' stroke='white' stroke-width='2.6' stroke-linecap='round'/></svg>">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+
+<link rel="stylesheet" href="assets/css/tokens.css">
+<link rel="stylesheet" href="assets/css/base.css">
+<link rel="stylesheet" href="assets/css/components.css">
+<link rel="stylesheet" href="assets/css/portal.css">
+</head>
+
+<body>
+
+<div class="portal">
+
+  <!-- ══════════════════════════════════════════════ Dark nav rail ══ -->
+  <nav class="pnav" id="pnav" aria-label="Caregiver portal">
+    <div class="pnav__brand">
+      <span class="pnav__mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
+          <path d="M7 8h10M7 12h10M7 16h6"/>
+        </svg>
+      </span>
+      <span class="pnav__name">COMMUNICARE</span>
+    </div>
+
+    <hr class="pnav__rule">
+
+    <div class="pnav__list">
+      <a class="navlink" href="#dashboard"   data-view="dashboard"   aria-current="page"><span data-ico="dash"></span>Dashboard</a>
+      <a class="navlink" href="#profile"     data-view="profile"     ><span data-ico="user"></span>Profile</a>
+      <a class="navlink" href="#vocabulary"  data-view="vocabulary"  ><span data-ico="book"></span>Vocabulary</a>
+      <a class="navlink" href="#geofencing"  data-view="geofencing"  ><span data-ico="pin2"></span>Geofencing</a>
+      <a class="navlink" href="#analytics"   data-view="analytics"   ><span data-ico="chart"></span>Analytics</a>
+    </div>
+
+    <div class="pnav__foot">
+      <hr class="pnav__rule">
+      <div class="pnav__list">
+        <a class="navlink navlink--danger" href="index.html" id="pnav-logout"><span data-ico="logout"></span>Logout</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ═════════════════════════════════════════════════════ Page ══ -->
+  <main class="ppage">
+
+    <header class="phead">
+      <div class="phead__top">
+        <span class="badge">Caregiver Portal</span>
+      </div>
+      <h1 id="page-title">Caregiver Dashboard</h1>
+      <p id="page-sub">Monitor the communicator, connection, location context and board performance.</p>
+    </header>
+
+    <div class="pbody">
+      <div class="view" id="view-dashboard"  role="region" aria-label="Dashboard"></div>
+      <div class="view" id="view-profile"    role="region" aria-label="Age and profile settings" hidden></div>
+      <div class="view" id="view-vocabulary" role="region" aria-label="Custom vocabulary" hidden></div>
+      <div class="view" id="view-geofencing" role="region" aria-label="Geofencing" hidden></div>
+      <div class="view" id="view-analytics"  role="region" aria-label="Analytics" hidden></div>
+    </div>
+
+  </main>
+</div>
+
+<div class="toasts" id="toasts" aria-live="polite" aria-atomic="true"></div>
+<div id="pin-root"></div>
+
+<script src="assets/js/symbols.js"></script>
+<script src="assets/js/store.js"></script>
+<script src="assets/js/speech.js"></script>
+<script src="assets/js/predict.js"></script>
+<script src="assets/js/pin.js"></script>
+<script src="assets/js/portal.js"></script>
+<script>
+  /* Icon markup lives in symbols.js so it stays in one place. */
+  document.querySelectorAll('[data-ico]').forEach(function (n) {
+    n.innerHTML = CC.UI[n.dataset.ico] || '';
+  });
+
+  /* Task 3 — the portal is gated behind a 4-digit PIN. */
+  CC.Pin.mount();
+  CC.Pin.open(function () {
+    CC.Portal.init();
+  });
+</script>
+</body>
+</html>
