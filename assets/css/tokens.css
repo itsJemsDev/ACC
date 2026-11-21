@@ -1,5 +1,5 @@
 /* =========================================================================
-   COMMUNICARE — Design Tokens
+   COMMUNICARE â€” Design Tokens
    Single source of truth. Every value below was measured from the Figma
    reference (1.png / 2.png) so the build is pixel-faithful, not eyeballed.
    ========================================================================= */
@@ -52,7 +52,7 @@
   --font-mono: "SFMono-Regular", ui-monospace, "JetBrains Mono",
                Menlo, Consolas, monospace;
 
-  /* Type scale — sizes in px, weights 400/500/600/700 */
+  /* Type scale â€” sizes in px, weights 400/500/600/700 */
   --t-eyebrow:  13px;  /* uppercase section labels  */
   --t-xs:       12px;  /* table headers, meta       */
   --t-sm:       13px;
@@ -71,20 +71,20 @@
   --ls-eyebrow:  0.08em;
   --ls-tight:    -0.015em;
 
-  /* ---------- Spacing — 4px base grid ---------- */
+  /* ---------- Spacing â€” 4px base grid ---------- */
   --s-1:  4px;   --s-2:  8px;   --s-3:  12px;  --s-4:  16px;
   --s-5:  20px;  --s-6:  24px;  --s-7:  32px;  --s-8:  40px;
   --s-9:  48px;  --s-10: 64px;
 
   /* ---------- Radii ---------- */
-  --r-xs:   6px;
-  --r-sm:   8px;
-  --r-md:   12px;
-  --r-lg:   16px;
-  --r-xl:   20px;
-  --r-pill: 999px;
+  --r-xs:   4px;
+  --r-sm:   5px;
+  --r-md:   8px;
+  --r-lg:   11px;
+  --r-xl:   14px;
+  --r-pill: 12px;
 
-  /* ---------- Elevation — deliberately subtle; the design leans on
+  /* ---------- Elevation â€” deliberately subtle; the design leans on
                  hairlines rather than shadows ---------- */
   --e-1: 0 1px 2px rgba(15, 23, 42, 0.05);
   --e-2: 0 1px 3px rgba(15, 23, 42, 0.07), 0 1px 2px rgba(15, 23, 42, 0.04);
@@ -101,7 +101,7 @@
   --t-slow: 280ms;
 
   /* ---------- Layout skeleton (measured) ---------- */
-  --shell-max:  1554px;   /* board content  135 → 1689 */
+  --shell-max:  1554px;   /* board content  135 â†’ 1689 */
   --gutter:     24px;
   --topbar-h:   81px;     /* header height incl. border */
 
@@ -111,7 +111,7 @@
   --portal-rail-w: 261px;
   --portal-pad:    37px;
 
-  /* Grid density presets — Task 2 */
+  /* Grid density presets â€” Task 2 */
   --cols:  4;            /* Youth default, matches 2.png */
   --gap:   20px;
   --card-h: 174px;

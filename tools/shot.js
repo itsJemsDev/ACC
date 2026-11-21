@@ -142,10 +142,10 @@ const round = n => Math.round(n * 10) / 10;
     const afterChip = await page.evaluate(() => document.querySelectorAll('.slot').length);
     results.push(['BOARD chip appends', { slots: afterChip }]);
 
-    /* backspace */
+    /* Delete */
     await page.click('#btn-back');
     await page.waitForTimeout(320);
-    results.push(['BOARD backspace', { slots: await page.evaluate(() => document.querySelectorAll('.slot').length) }]);
+    results.push(['BOARD Delete', { slots: await page.evaluate(() => document.querySelectorAll('.slot').length) }]);
 
     /* language toggle */
     await page.click('#lang-tl');

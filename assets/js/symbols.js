@@ -362,20 +362,96 @@
     '<path d="M12 24h5M31 24h5" ' + K + ' stroke="' + C.red + '" stroke-width="3"/>' +
     '<path d="M19.4 24h9.2M24 19.4v9.2" ' + K + ' stroke="#fff" stroke-width="2.6"/>');
 
+  /* Additional everyday vocabulary. These local vector pictograms are
+     intentionally simple and remain available without a network connection. */
+  ART.pain = S('<circle cx="24" cy="24" r="17" fill="' + C.redXL + '" ' + K + '/>' +
+    '<path d="M24 9v7M24 32v7M9 24h7M32 24h7M13.4 13.4l5 5M29.6 29.6l5 5M34.6 13.4l-5 5M18.4 29.6l-5 5" stroke="' + C.red + '" stroke-width="2.8" stroke-linecap="round"/>' +
+    '<circle cx="24" cy="24" r="5" fill="' + C.red + '"/>');
+  ART.finished = S('<circle cx="24" cy="24" r="17" fill="' + C.greenXL + '" ' + K + '/>' +
+    '<path d="m14 24 7 7 14-15" fill="none" stroke="' + C.green + '" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>');
+  ART.wait = S('<circle cx="24" cy="24" r="17" fill="' + C.amberXL + '" ' + K + '/>' +
+    '<path d="M17 10h14M17 38h14M19 11c0 6 10 9 10 13s-10 7-10 13M29 11c0 6-10 9-10 13s10 7 10 13" fill="none" stroke="' + C.amber + '" stroke-width="2.6" stroke-linecap="round"/>');
+  ART.hot = S('<circle cx="24" cy="24" r="17" fill="' + C.redXL + '" ' + K + '/>' +
+    '<path d="M15 29a9 9 0 0018 0c0-5-4-7-4-12 0-2 1-4 2-5-7 3-4 8-8 11-1-3-1-5 0-7-5 4-8 8-8 13z" fill="' + C.red + '" ' + K + '/>');
+  ART.cold = S('<circle cx="24" cy="24" r="17" fill="' + C.skyXL + '" ' + K + '/>' +
+    '<path d="M24 10v28M12 17l24 14M36 17L12 31M24 10l-3 4M24 10l3 4M24 38l-3-4M24 38l3-4M12 17l5 1M12 17l1 5M36 17l-5 1M36 17l-1 5M12 31l5-1M12 31l1-5M36 31l-5-1M36 31l-1-5" stroke="' + C.blue + '" stroke-width="2.2" stroke-linecap="round"/>');
+  ART.thirsty = S('<circle cx="24" cy="24" r="17" fill="' + C.skyXL + '" ' + K + '/>' +
+    '<path d="M24 11c4.8 6 7.5 9.7 7.5 13.2a7.5 7.5 0 01-15 0C16.5 20.7 19.2 17 24 11z" fill="' + C.sky + '" ' + K + '/>' +
+    '<path d="M21 25c.4 1.8 1.4 2.8 3 3" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/>');
+  ART.calm = S(face(C.greenXL, flatM, eyes + '<path d="M9 12l3 2M39 12l-3 2" ' + K + ' stroke="' + C.green + '" stroke-width="2.4"/>'));
+  ART.worried = S(face(C.purpleXL, frown, eyes + '<path d="M17 16l5 2M31 16l-5 2" ' + K + ' stroke="' + C.purple + '" stroke-width="2.5"/>'));
+  ART.frustrated = S(face(C.redXL, flatM, eyes + '<path d="M14 13l6 5M34 13l-6 5" ' + K + ' stroke="' + C.red + '" stroke-width="2.6"/>'));
+  ART.confused = S(face(C.amberXL, '<circle cx="24" cy="30" r="2" fill="' + C.ink + '"/>', eyes + '<path d="M18 15l4 2M30 17l4-2" ' + K + ' stroke="' + C.amber + '" stroke-width="2.4"/>'));
+  ART.vegetables = S('<circle cx="24" cy="24" r="17" fill="' + C.greenXL + '" ' + K + '/>' +
+    '<path d="M15 25c0-6 4-10 9-10s9 4 9 10-4 10-9 10-9-4-9-10z" fill="' + C.green + '" ' + K + '/>' +
+    '<path d="M24 15c-1-5 2-8 7-8-1 4-3 7-7 8zM22 16c-4-4-8-3-10 1 4 2 7 2 10-1z" fill="' + C.limeL + '" ' + K + '/>');
+  ART.chicken = S('<circle cx="24" cy="24" r="17" fill="' + C.amberXL + '" ' + K + '/>' +
+    '<path d="M13 27c0-6 4-11 10-11 5 0 7 4 10 7 3 3 4 6 2 9-2 3-6 4-10 2-3-2-6-2-9-1-3 0-5-2-5-6z" fill="' + C.amberL + '" ' + K + '/>' +
+    '<path d="M12 28l-4-2 1 5c1 3 4 4 7 2M32 19l3-4m-3 4 5 1" ' + K + ' stroke-width="2.5"/>');
+  ART.snack = S('<circle cx="24" cy="24" r="17" fill="' + C.amberXL + '" ' + K + '/>' +
+    '<path d="M14 18h20l-2 20H16z" fill="' + C.amberL + '" ' + K + '/>' +
+    '<path d="M14 18l4-6h12l4 6M19 24h10M20 29h8" fill="none" stroke="' + C.amber + '" stroke-width="2.4" stroke-linecap="round"/>');
+  ART.juice = S('<circle cx="24" cy="24" r="17" fill="' + C.skyXL + '" ' + K + '/>' +
+    '<path d="M15 17h18l-2 21H17z" fill="' + C.amberL + '" ' + K + '/>' +
+    '<path d="M25 17l4-9M21 25h6" fill="none" stroke="' + C.ink + '" stroke-width="2.3" stroke-linecap="round"/>');
+  ART.banana = S('<circle cx="24" cy="24" r="17" fill="' + C.greenXL + '" ' + K + '/>' +
+    '<path d="M12 17c5 10 14 15 25 10-2 8-9 12-17 8-7-3-11-10-8-18z" fill="' + C.amberL + '" ' + K + '/>' +
+    '<path d="M12 17l3-3M37 27l2-3" ' + K + ' stroke-width="2.4"/>');
+  ART.baby = S('<circle cx="24" cy="24" r="17" fill="' + C.pinkXL + '" ' + K + '/>' +
+    '<circle cx="24" cy="21" r="9" fill="' + C.skin + '" ' + K + '/>' +
+    '<circle cx="21" cy="21" r="1.4" fill="' + C.ink + '"/><circle cx="27" cy="21" r="1.4" fill="' + C.ink + '"/>' +
+    '<path d="M21 27c2 2 4 2 6 0M15 38c0-5 4-8 9-8s9 3 9 8" fill="' + C.skyL + '" ' + K + '/>');
+  ART.grandma = S(person(C.grey, C.pink, '<path d="M14 14c1-6 5-9 10-9s9 3 10 9" fill="none" ' + K + ' stroke-width="3"/><path d="M18 41v-5h12v5" fill="none" ' + K + '/>') +
+    '<circle cx="21" cy="19.5" r="1" fill="' + C.ink + '"/><circle cx="27" cy="19.5" r="1" fill="' + C.ink + '"/>' +
+    '<path d="M21 23c2 1.5 4 1.5 6 0M17.5 19.5h2M28.5 19.5h2M19.5 19.5h3M25.5 19.5h3" fill="none" ' + K + ' stroke-width="1.4"/>');
+  ART.grandpa = S(person(C.grey, C.teal, '<path d="M16 13c2-5 5-7 8-7s6 2 8 7" fill="none" ' + K + ' stroke-width="3"/>') +
+    '<circle cx="21" cy="19.5" r="1" fill="' + C.ink + '"/><circle cx="27" cy="19.5" r="1" fill="' + C.ink + '"/>' +
+    '<path d="M21 23c2 1.5 4 1.5 6 0M19 18.5h4M25 18.5h4" fill="none" ' + K + ' stroke-width="1.6"/>');
+  ART.doctor = S(person(C.hair3, C.blueXL, '<path d="M17 24h14v17H17z" fill="' + C.white + '" ' + K + '/><path d="M24 28v9M19.5 32.5h9" ' + K + ' stroke="' + C.red + '" stroke-width="2.8"/>') +
+    '<circle cx="21" cy="19.5" r="1" fill="' + C.ink + '"/><circle cx="27" cy="19.5" r="1" fill="' + C.ink + '"/><path d="M21 23c2 1.5 4 1.5 6 0" fill="none" ' + K + ' stroke-width="1.5"/>');
+  ART.nurse = S(person(C.hair, C.pinkL, '<path d="M17 25h14v16H17z" fill="' + C.pinkL + '" ' + K + '/><path d="M24 28v9M19.5 32.5h9" ' + K + ' stroke="' + C.red + '" stroke-width="2.8"/><path d="M17 11c1-4 4-6 7-6s6 2 7 6" fill="' + C.white + '" ' + K + '/><path d="M24 7v7M21 10h6" ' + K + ' stroke="' + C.red + '" stroke-width="1.8"/>') +
+    '<circle cx="21" cy="19.5" r="1" fill="' + C.ink + '"/><circle cx="27" cy="19.5" r="1" fill="' + C.ink + '"/><path d="M21 23c2 1.5 4 1.5 6 0" fill="none" ' + K + ' stroke-width="1.5"/>');
+  ART.bathroom = S('<circle cx="24" cy="24" r="17" fill="' + C.blueXL + '" ' + K + '/>' +
+    '<path d="M15 11h11v12H15zM13 23h23c0 8-5 13-12 13s-11-5-11-13zM20 36v4M29 36v4" fill="' + C.white + '" ' + K + '/>');
+  ART.restaurant = S('<circle cx="24" cy="24" r="17" fill="' + C.amberXL + '" ' + K + '/>' +
+    '<path d="M10 20h28v18H10zM8 20h32M13 15v-5M18 15v-5M15.5 15v25M34 10v30M34 10c-5 4-5 9-5 13h5" fill="' + C.white + '" ' + K + '/>');
+  ART.library = S('<circle cx="24" cy="24" r="17" fill="' + C.purpleXL + '" ' + K + '/>' +
+    '<path d="M11 13h11a4 4 0 014 4v21H15a4 4 0 01-4-4zM37 13H26v25h7a4 4 0 004-4zM15 20h7M15 25h7M30 20h4M30 25h4" fill="' + C.white + '" ' + K + '/>');
+  ART.outside = S('<circle cx="24" cy="24" r="17" fill="' + C.skyXL + '" ' + K + '/>' +
+    '<circle cx="34" cy="14" r="4" fill="' + C.amber + '" ' + K + '/>' +
+    '<path d="M8 34l10-12 7 8 5-6 10 12H8z" fill="' + C.greenL + '" ' + K + '/>');
+
   /* -------------------------------------------------------- categories -- */
+  var CAT_STROKE = 'fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"';
   var CAT_ART = {
-    basic:    S('<circle cx="24" cy="24" r="16" fill="' + C.blueXL + '" ' + K + '/><path d="M16 17h16M16 24h16M16 31h10" ' + K + ' stroke="' + C.blue + '" stroke-width="3"/>'),
-    people:   S('<circle cx="19" cy="19" r="6.4" fill="' + C.skin + '" ' + K + '/><circle cx="31" cy="21" r="5" fill="' + C.skinD + '" ' + K + '/><path d="M8 39c0-5.4 5-9.6 11-9.6S30 33.6 30 39z" fill="' + C.blueL + '" ' + K + '/><path d="M30 31.6c5.6.6 10 3.4 10 7.4H30z" fill="' + C.pinkL + '" ' + K + '/>'),
-    food:     S('<path d="M14 8v12M14 8c-3 0-4.4 3-4.4 6s1.4 6 4.4 6M14 8v12M14 20v20" ' + K + ' stroke="' + C.ink + '" stroke-width="2.6"/><path d="M32 8c-4 3.4-6 7.4-6 11 0 3 2.4 5 6 5s6-2 6-5c0-3.6-2-7.6-6-11z" fill="' + C.amberL + '" ' + K + '/>'),
-    feelings: S(face(C.greenXL, smile, eyes)),
-    needs:    S('<path d="M24 8l3.6 8.4 9 1-6.8 6 2 8.8L24 27.8l-7.8 4.4 2-8.8-6.8-6 9-1z" fill="' + C.amberL + '" ' + K + '/>'),
-    actions:  S('<circle cx="24" cy="24" r="16" fill="' + C.greenXL + '" ' + K + '/><path d="M20.4 18.6l10.6 5.4-10.6 5.4z" fill="' + C.green + '" stroke="' + C.green + '" stroke-width="2.2" stroke-linejoin="round"/>'),
-    places:   S('<path d="M24 41c-8.4-5.6-12.6-10-12.6-14.6A8.4 8.4 0 0124 21a8.4 8.4 0 0112.6 5.4C36.6 31 32.4 35.4 24 41z" fill="' + C.red + '" ' + K + '/><circle cx="24" cy="26.4" r="4" fill="' + C.white + '"/>'),
-    others:   S('<circle cx="24" cy="24" r="16" fill="' + C.greyXL + '" ' + K + '/><path d="M16 17h16M16 24h16M16 31h10" ' + K + ' stroke="' + C.grey + '" stroke-width="3"/>')
+    basic:    S('<path d="m24 5 5.8 12 13.2 1.9-9.5 9.3 2.2 13.1L24 35.1l-11.7 6.2 2.2-13.1L5 18.9 18.2 17 24 5Z" ' + CAT_STROKE + '/>'),
+    people:   S('<circle cx="18" cy="17" r="6" ' + CAT_STROKE + '/><circle cx="32" cy="19" r="5" ' + CAT_STROKE + '/><path d="M6 40v-3a12 12 0 0 1 24 0v3M29 30a9 9 0 0 1 13 8v2h-9" ' + CAT_STROKE + '/>'),
+    food:     S('<circle cx="24" cy="25" r="14" ' + CAT_STROKE + '/><circle cx="24" cy="25" r="8" ' + CAT_STROKE + '/><path d="M6 8v12M11 8v12M6 14h5M8.5 20v20M40 8v32M40 8c-5 4-6 10-6 15h6" ' + CAT_STROKE + '/>'),
+    feelings: S('<circle cx="24" cy="24" r="18" ' + CAT_STROKE + '/><path d="M17 20h.01M31 20h.01M17 29c2 4 5 6 7 6s5-2 7-6" ' + CAT_STROKE + '/>'),
+    needs:    S('<circle cx="24" cy="24" r="18" ' + CAT_STROKE + '/><path d="M24 14v20M14 24h20" ' + CAT_STROKE + '/>'),
+    actions:  S('<circle cx="24" cy="24" r="18" ' + CAT_STROKE + '/><path d="m20 15 14 9-14 9V15Z" ' + CAT_STROKE + '/>'),
+    places:   S('<path d="M24 43S9 30 9 19a15 15 0 0 1 30 0c0 11-15 24-15 24Z" ' + CAT_STROKE + '/><circle cx="24" cy="19" r="5" ' + CAT_STROKE + '/>'),
+    others:   S('<path d="m24 5 17 9v20l-17 9-17-9V14l17-9Z" ' + CAT_STROKE + '/><path d="m7 14 17 10 17-10M24 24v19M15 9l18 10" ' + CAT_STROKE + '/>')
   };
 
-  /* ------------------------------------------------------------- data -- */
-  function sym(id, en, tl, cat) { return { id: id, en: en, tl: tl, cat: cat, icon: ART[id] }; }
+  /* ARASAAC pictograms used for the core board. Files are stored locally so
+     the board remains available offline; see the visible attribution in index.html. */
+  var ARASAAC_IDS = {
+    me:6632, you:6625, need:37160, pay:6457, buy:8986, work:6624, yes:5584, want:5441,
+    hungry:4962, eat:6456, drink:6061, play:23392, sleep:6479, go:8142, stop:7196,
+    please:8195, thanks:8129, hug:4550, no:5526, help:32648, home:6964, school:32446,
+    friend:25790, mom:2458, dad:31146, sister:2422, brother:2423, teacher:6556,
+    rice:6911, fruit:28339, milk:2445, bread:2494, happy:35533, sad:35545,
+    angry:35539, tired:35537, scared:35535, sick:7040, love:37721, toilet:5921,
+    bath:2272, medicine:8163, clothes:7233, break:16643, come:32669, read:7141,
+    write:2380, walk:29951, give:28431, take:10148, hospital:36210, park:5379,
+    store:35695, church:3118, market:32942, more:5508, sorry:11625
+  };
+  ['need','pay','buy','work','want','hug'].forEach(function (id) { if (!ART[id]) ART[id] = ART.more; });
+  function sym(id, en, tl, cat) {
+    return { id: id, en: en, tl: tl, cat: cat, icon: ART[id] || ART.more,
+      imageUrl: ARASAAC_IDS[id] ? 'assets/images/arasaac/' + ARASAAC_IDS[id] + '.png' : '' };
+  }
 
   var SYMBOLS = [
     /* Basic */
@@ -387,6 +463,11 @@
     sym('sorry', 'Sorry', 'Pasensya', 'basic'),
     sym('help', 'Help', 'Tulong', 'basic'),
     sym('stop', 'Stop', 'Tigil', 'basic'),
+    sym('want', 'Want', 'Gusto', 'basic'),
+    sym('need', 'Need', 'Kailangan', 'needs'),
+    sym('pay', 'Pay', 'Bayad', 'actions'),
+    sym('buy', 'Buy', 'Bumili', 'actions'),
+    sym('work', 'Work', 'Trabaho', 'actions'),
     /* People */
     sym('me', 'Me', 'Ako', 'people'),
     sym('you', 'You', 'Ikaw', 'people'),
@@ -396,37 +477,59 @@
     sym('brother', 'Brother', 'Kapatid', 'people'),
     sym('friend', 'Friend', 'Kaibigan', 'people'),
     sym('teacher', 'Teacher', 'Guro', 'people'),
+    sym('hug', 'Hug', 'Yakap', 'people'),
+    sym('baby', 'Baby', 'Sanggol', 'people'),
+    sym('grandma', 'Grandma', 'Lola', 'people'),
+    sym('grandpa', 'Grandpa', 'Lolo', 'people'),
+    sym('doctor', 'Doctor', 'Doktor', 'people'),
+    sym('nurse', 'Nurse', 'Nars', 'people'),
     /* Food */
     sym('eat', 'Eat', 'Kain', 'food'),
     sym('drink', 'Drink', 'Inom', 'food'),
     sym('water', 'Water', 'Tubig', 'food'),
-    sym('rice', 'Rice', 'Bigyan', 'food'),
-    sym('fruit', 'Fruit', 'Fruits', 'food'),
-    sym('milk', 'Milk', 'Suso', 'food'),
-    sym('bread', 'Bread', 'Panis', 'food'),
+    sym('rice', 'Rice', 'Kanin', 'food'),
+    sym('fruit', 'Fruit', 'Prutas', 'food'),
+    sym('milk', 'Milk', 'Gatas', 'food'),
+    sym('bread', 'Bread', 'Tinapay', 'food'),
     sym('hungry', 'Hungry', 'Gutom', 'food'),
+    sym('chicken', 'Chicken', 'Manok', 'food'),
+    sym('vegetables', 'Vegetables', 'Gulay', 'food'),
+    sym('banana', 'Banana', 'Saging', 'food'),
+    sym('snack', 'Snack', 'Meryenda', 'food'),
+    sym('juice', 'Juice', 'Katas', 'food'),
     /* Feelings */
     sym('happy', 'Happy', 'Masaya', 'feelings'),
     sym('sad', 'Sad', 'Malungkot', 'feelings'),
-    sym('angry', 'Angry', 'Matagalit', 'feelings'),
+    sym('angry', 'Angry', 'Galit', 'feelings'),
     sym('tired', 'Tired', 'Pagod', 'feelings'),
     sym('scared', 'Scared', 'Natatakot', 'feelings'),
     sym('sick', 'Sick', 'May sakit', 'feelings'),
     sym('love', 'Love', 'Mahal', 'feelings'),
-    sym('excited', 'Excited', 'Nakuha', 'feelings'),
+    sym('excited', 'Excited', 'Nasasabik', 'feelings'),
+    sym('calm', 'Calm', 'Kalmado', 'feelings'),
+    sym('worried', 'Worried', 'Nag-aalala', 'feelings'),
+    sym('frustrated', 'Frustrated', 'Nadidismaya', 'feelings'),
+    sym('confused', 'Confused', 'Nalilito', 'feelings'),
     /* Needs */
     sym('toilet', 'Toilet', 'CR', 'needs'),
-    sym('bath', 'Bath', 'Palugo', 'needs'),
+    sym('bath', 'Bath', 'Paligo', 'needs'),
     sym('medicine', 'Medicine', 'Gamot', 'needs'),
     sym('sleep', 'Sleep', 'Tulog', 'needs'),
-    sym('clothes', 'Clothes', 'Kasyaan', 'needs'),
-    sym('diaper', 'Diaper', 'Pipi', 'needs'),
+    sym('clothes', 'Clothes', 'Damit', 'needs'),
+    sym('diaper', 'Diaper', 'Lampin', 'needs'),
     sym('clean', 'Clean', 'Malinis', 'needs'),
     sym('break', 'Break', 'Pahinga', 'needs'),
+    sym('pain', 'Pain', 'Masakit', 'needs'),
+    sym('finished', 'Finished', 'Tapos na', 'needs'),
+    sym('wait', 'Wait', 'Hintay', 'needs'),
+    sym('hot', 'Hot', 'Mainit', 'needs'),
+    sym('cold', 'Cold', 'Malamig', 'needs'),
+    sym('thirsty', 'Thirsty', 'Uhaw', 'needs'),
+    sym('bathroom', 'Bathroom', 'Banyo', 'needs'),
     /* Actions */
     sym('go', 'Go', 'Pumunta', 'actions'),
     sym('come', 'Come', 'Dito', 'actions'),
-    sym('play', 'Play', 'Laruin', 'actions'),
+    sym('play', 'Play', 'Maglaro', 'actions'),
     sym('read', 'Read', 'Basahin', 'actions'),
     sym('write', 'Write', 'Sulatin', 'actions'),
     sym('walk', 'Walk', 'Lakad', 'actions'),
@@ -441,6 +544,9 @@
     sym('church', 'Church', 'Simbahan', 'places'),
     sym('market', 'Market', 'Palengke', 'places'),
     sym('therapy', 'Therapy', 'Terapiya', 'places'),
+    sym('restaurant', 'Restaurant', 'Restawran', 'places'),
+    sym('library', 'Library', 'Aklatan', 'places'),
+    sym('outside', 'Outside', 'Sa labas', 'places'),
     /* Others */
     sym('time', 'Time', 'Oras', 'others'),
     sym('number', 'Number', 'Numero', 'others'),
@@ -454,13 +560,13 @@
 
   var CATEGORIES = [
     { id: 'basic',    label: 'Basic' },
+    { id: 'others',   label: 'Others' },
+    { id: 'places',   label: 'Places' },
+    { id: 'feelings', label: 'Feelings' },
     { id: 'people',   label: 'People' },
     { id: 'food',     label: 'Food' },
-    { id: 'feelings', label: 'Feelings' },
     { id: 'needs',    label: 'Needs' },
-    { id: 'actions',  label: 'Actions' },
-    { id: 'places',   label: 'Places' },
-    { id: 'others',   label: 'Others' }
+    { id: 'actions',  label: 'Actions' }
   ];
 
   /* ---------------------------------------------------------------- ui -- */
@@ -471,7 +577,7 @@
   };
 
   var UI = {
-    backspace: I('<path d="M21 5H9L3 12l6 7h12a1 1 0 001-1V6a1 1 0 00-1-1z"/><path d="M17 9l-5 6M12 9l5 6"/>'),
+    Delete: I('<path d="M21 5H9L3 12l6 7h12a1 1 0 001-1V6a1 1 0 00-1-1z"/><path d="M17 9l-5 6M12 9l5 6"/>'),
     trash:     I('<path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13"/>'),
     speaker:   I('<path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16.5 8.5a5 5 0 010 7M19.5 6a9 9 0 010 12"/>'),
     lock:      I('<rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 018 0v3"/>'),
@@ -479,6 +585,7 @@
     back:      I('<path d="M15 18l-6-6 6-6"/>'),
     dash:      I('<rect x="3" y="3" width="7" height="8" rx="1.6"/><rect x="14" y="3" width="7" height="5" rx="1.6"/><rect x="14" y="12" width="7" height="9" rx="1.6"/><rect x="3" y="15" width="7" height="6" rx="1.6"/>'),
     user:      I('<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/>'),
+    settings:  I('<path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3"/><path d="M2 14h4M10 8h4M18 16h4"/>'),
     book:      I('<path d="M4 5a2 2 0 012-2h13v16H6a2 2 0 00-2 2z"/><path d="M19 19v2H6"/>'),
     pin2:      I('<path d="M12 21s7-5.6 7-11a7 7 0 10-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10" r="2.6"/>'),
     chart:     I('<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>'),
@@ -494,8 +601,10 @@
     hdd:       I('<rect x="3" y="5" width="18" height="6" rx="2"/><rect x="3" y="13" width="18" height="6" rx="2"/><path d="M7 8h.01M7 16h.01"/>'),
     trend:     I('<path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/>'),
     grid:      I('<rect x="3" y="3" width="7.5" height="7.5" rx="1.6"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.6"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.6"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.6"/>'),
+    folderPlus:I('<path d="M3 7.5a2 2 0 012-2h5l2 2h7a2 2 0 012 2v2M3 9.5v9a2 2 0 002 2h8M17 14v7M13.5 17.5h7"/>'),
     home:      I('<path d="M4 11l8-7 8 7v8a1.6 1.6 0 01-1.6 1.6H5.6A1.6 1.6 0 014 19z"/><path d="M9.5 20.6v-6h5v6"/>'),
-    globe:     I('<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.4 3 14.6 0 18M12 3c-3 3.4-3 14.6 0 18"/>')
+    globe:     I('<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.4 3 14.6 0 18M12 3c-3 3.4-3 14.6 0 18"/>'),
+    search:    I('<circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/>')
   };
 
   var UI_SOLID = {

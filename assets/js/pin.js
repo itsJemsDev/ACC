@@ -19,10 +19,10 @@
             '<span style="width:44px;height:44px;border-radius:12px;background:var(--c-primary-soft);' +
               'color:var(--c-primary);display:grid;place-items:center;flex:none">' + icon('lock') + '</span>' +
             '<div>' +
-              '<h2 class="modal__title" id="pin-t">Caregiver access</h2>' +
+              '<h2 class="modal__title" id="pin-t">Caregiver / SPED teacher access</h2>' +
             '</div>' +
           '</div>' +
-          '<p class="modal__sub">Enter the 4-digit PIN to open the caregiver portal.</p>' +
+          '<p class="modal__sub">Enter the 4-digit PIN to open the caregiver and SPED teacher portal.</p>' +
           '<div class="keypad">' +
             '<div class="keypad__dots" id="pin-dots">' +
               '<span class="keypad__dot"></span><span class="keypad__dot"></span>' +
@@ -32,7 +32,7 @@
               [1,2,3,4,5,6,7,8,9].map(function (n) {
                 return '<button class="key" data-k="' + n + '" aria-label="Digit ' + n + '">' + n + '</button>';
               }).join('') +
-              '<button class="key key--fn" data-k="back" aria-label="Delete last digit">' + icon('backspace') + '</button>' +
+              '<button class="key key--fn" data-k="back" aria-label="Delete last digit">' + icon('Delete') + '</button>' +
               '<button class="key" data-k="0" aria-label="Digit 0">0</button>' +
               '<button class="key key--go" data-k="go" aria-label="Confirm PIN">' + icon('check') + '</button>' +
             '</div>' +
@@ -59,7 +59,7 @@
     /* keyboard support — caregivers use desktop too */
     host.onkeydown = function (e) {
       if (/^[0-9]$/.test(e.key)) { if (buffer.length < 4) { buffer += e.key; paint(pad); } }
-      else if (e.key === 'Backspace') { buffer = buffer.slice(0, -1); paint(pad); }
+      else if (e.key === 'Delete') { buffer = buffer.slice(0, -1); paint(pad); }
       else if (e.key === 'Enter') { submit(pad); }
       else if (e.key === 'Escape') { close(); }
     };

@@ -7,6 +7,8 @@
   'use strict';
 
   var Store = global.CC.Store, UI = global.CC.UI;
+  var CORE_SYMBOLS = ['me','go','need','pay','buy','work','yes','want','you','no','hungry','eat','drink','play','sleep','stop','please','thanks','hug','help'];
+  var CAT_LABEL_TL = { basic:'PANGUNAHIN', others:'MGA BAGAY', places:'MGA LUGAR', feelings:'DAMDAMIN', people:'MGA TAO', food:'PAGKAIN', needs:'PANGANGAILANGAN', actions:'GAWAIN' };
   var el = {};
 
   function $(id) { return document.getElementById(id); }
@@ -27,8 +29,34 @@
     if (n < 1048576) return (n / 1024).toFixed(1) + ' KB';
     return (n / 1048576).toFixed(1) + ' MB';
   }
+  function exportLogs() {
+    var rows = [['Timestamp', 'Phrase', 'Symbols']];
+    (Store.get().history || []).forEach(function (entry) {
+      var words = (entry.ids || []).map(function (id) { var symbol = Store.symbol(id); return symbol ? Store.labels(symbol).primary : id; });
+      rows.push([when(entry.at), words.join(' '), words.length]);
+    });
+    var csv = rows.map(function (row) { return row.map(function (value) { return '"' + String(value).replace(/"/g, '""') + '"'; }).join(','); }).join('\r\n');
+    var url = URL.createObjectURL(new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8' }));
+    var link = document.createElement('a');
+    link.href = url; link.download = 'communicare-phrase-logs.csv'; link.click();
+    setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+  }
+  function saveZone(coordsText) {
+    var parts = String(coordsText).split(',').map(function (part) { return Number(part.trim()); });
+    if (parts.length !== 2 || !isFinite(parts[0]) || !isFinite(parts[1]) || Math.abs(parts[0]) > 90 || Math.abs(parts[1]) > 180) {
+      toast('Enter valid latitude and longitude'); return;
+    }
+    var label = prompt('Name this location:', 'New location');
+    if (!label || !label.trim()) return;
+    var state = Store.get();
+    var id = 'zone-' + Date.now().toString(36);
+    state.geofences.push({ id: id, label: label.trim(), coords: parts[0].toFixed(4) + ', ' + parts[1].toFixed(4), radius: 200, active: true, boost: [] });
+    Store.set({ geofences: state.geofences, activeContext: id });
+    renderGeofencing();
+    toast('Geofence zone added', 'check');
+  }
   function densityLabel() {
-    return { early: '3 × 3', youth: '4 × 5', adult: '5 × 6' }[Store.get().ageGroup] || '4 × 5';
+    return { large: 'Large buttons', medium: 'Balanced', compact: 'More words' }[Store.get().symbolSize] || 'Balanced';
   }
   function toast(msg, icon) {
     var t = h('div', 'toast', (icon ? UI[icon] : '') + '<span>' + esc(msg) + '</span>');
@@ -45,7 +73,7 @@
 
     var stats = [
       ['Vocabulary items', fx(total), ''],
-      ['Categories', String(global.CC.CATEGORIES.length), ''],
+      ['Categories', String(Store.categories().length), ''],
       ['Grid density', densityLabel(), ''],
       ['Symbols tapped', fx(s.stats.symbolsTapped), ''],
       ['Phrases built', fx(s.stats.phrasesBuilt), '']
@@ -158,26 +186,106 @@
   }
 
   /* ═══════════════════════════════════════════════════════ PROFILE ══ */
+  function renderDashboardReference() {
+    var s = Store.get();
+    var symbols = Store.symbols();
+    var history = s.history || [];
+    var name = (s.profile && s.profile.name) || 'your communicator';
+    var popular = Object.keys(s.stats.perSymbol || {}).map(function (id) {
+      return { symbol: Store.symbol(id), count: s.stats.perSymbol[id] };
+    }).filter(function (x) { return x.symbol; }).sort(function (a, b) { return b.count - a.count; }).slice(0, 4);
+    var recent = history.slice(0, 4).map(function (entry) {
+      var words = (entry.ids || []).map(function (id) { return Store.symbol(id); }).filter(Boolean).map(function (sym) { return Store.labels(sym).primary; });
+      return '<div class="dash-phrase"><span>' + esc(words.join(' ')) + '</span><time>' + esc(when(entry.at)) + '</time></div>';
+    }).join('');
+    var geofenceCount = (s.geofences || []).filter(function (zone) { return zone.active; }).length;
+
+    el.vDash.innerHTML =
+      '<section class="caregiver-welcome"><div><span class="caregiver-welcome__eyebrow">CAREGIVER / SPED TEACHER WORKSPACE</span><h2>Welcome</h2><p>Here is a quick overview of ' + esc(name) + '\'s communication board.</p></div><div class="caregiver-welcome__actions"><a class="btn btn--primary" href="index.html">Open AAC board</a><button type="button" class="btn" data-go="settings">Settings</button></div></section>' +
+      '<div class="dash-stats">' +
+        '<article class="dash-stat"><div class="dash-stat__label dash-stat__label--blue">' + UI.book + ' PHRASES BUILT</div><strong>' + fx(s.stats.phrasesBuilt) + '</strong><p>Total phrases recorded</p></article>' +
+        '<article class="dash-stat"><div class="dash-stat__label dash-stat__label--green">' + UI.book + ' SYMBOLS</div><strong>' + fx(symbols.length) + '</strong><p>' + fx((s.customSymbols || []).length) + ' custom symbols</p></article>' +
+        '<article class="dash-stat"><div class="dash-stat__label dash-stat__label--purple">' + UI.spark + ' QUICK PHRASES</div><strong>' + fx((s.quickPhrases || []).length) + '</strong><p>Ready to speak on the board</p></article>' +
+        '<article class="dash-stat"><div class="dash-stat__label dash-stat__label--orange">' + UI.pin + ' ACTIVE Geofencing</div><strong>' + fx(geofenceCount) + '</strong><p>Places used for suggestions</p></article>' +
+      '</div>' +
+      '<div class="dash-columns">' +
+        '<section class="card dash-panel dash-recent"><div class="dash-panel__head"><h2>' + UI.clock + ' Recent phrases</h2><button class="dash-link" data-go="analytics">View history ' + UI.back + '</button></div>' +
+          (recent || '<div class="dash-empty">Spoken phrases will appear here after the board is used.</div>') +
+        '</section>' +
+        '<div class="dash-side">' +
+          '<section class="card dash-panel dash-popular"><div class="dash-panel__head"><h2>' + UI.spark + ' Most used symbols</h2></div>' +
+            (popular.length ? '<div class="dash-popular__list">' + popular.map(function (item) { var label = Store.labels(item.symbol).primary; return '<div><span>' + esc(label) + '</span><b>' + fx(item.count) + '</b></div>'; }).join('') + '</div>' : '<div class="dash-empty">Symbol activity will appear here.</div>') +
+          '</section>' +
+          '<section class="card dash-panel dash-access"><h2>Quick links</h2>' +
+            '<button class="dash-access__link" data-go="vocabulary"><span class="dash-access__icon dash-access__icon--green">' + UI.book + '</span><span><b>Vocabulary</b><small>Add symbols and organize categories</small></span><span class="dash-chevron">›</span></button>' +
+            '<button class="dash-access__link" data-go="profile"><span class="dash-access__icon dash-access__icon--blue">' + UI.user + '</span><span><b>Profile</b><small>Name, age group, and language</small></span><span class="dash-chevron">›</span></button>' +
+            '<button class="dash-access__link" data-go="settings"><span class="dash-access__icon dash-access__icon--purple">' + UI.settings + '</span><span><b>Settings</b><small>Board layout and accessibility</small></span><span class="dash-chevron">›</span></button>' +
+            '<button class="dash-access__link" data-go="geofencing"><span class="dash-access__icon dash-access__icon--orange">' + UI.pin + '</span><span><b>Geofencing</b><small>Manage location based suggestions</small></span><span class="dash-chevron">›</span></button>' +
+            '<button class="dash-access__link" data-go="analytics"><span class="dash-access__icon dash-access__icon--purple">' + UI.chart + '</span><span><b>Analytics</b><small>Review recent phrase activity</small></span><span class="dash-chevron">›</span></button>' +
+          '</section>' +
+        '</div>' +
+      '</div>';
+    el.vDash.querySelectorAll('[data-go]').forEach(function (button) { button.addEventListener('click', function () { go(button.dataset.go); }); });
+  }
+
   function renderProfile() {
     var s = Store.get();
-    var ages = [
-      ['early', 'Early Childhood', 'Ages 3–8 · large icons, minimal clutter'],
-      ['youth', 'Youth / Adolescent', 'Ages 9–17 · balanced density'],
-      ['adult', 'Adult', 'Ages 18+ · compact, dense vocabulary']
-    ];
-    var sizes = [['large', 'Large'], ['medium', 'Medium'], ['compact', 'Compact']];
-
+    var ageOptions = [['early', 'Child', '3–12 years'], ['youth', 'Youth', '13–17 years'], ['adult', 'Adult', '18+ years']];
     el.vProfile.innerHTML =
+      '<section class="settings-intro"><div><span class="u-eyebrow">CAREGIVER / SPED TEACHER</span><h2>Communicator profile</h2><p>Keep the communicator’s basic details and language in one place.</p></div><span class="settings-save-note">Changes apply after you select Save profile.</span></section>' +
+      '<section class="profile-form-card card"><div class="card__body"><h3 class="card__title">Basic information</h3>' +
+        '<div class="profile-form-grid"><label class="field"><span class="field__label">Name</span><input class="input" id="p-name" value="' + esc(s.profile.name) + '" maxlength="40" autocomplete="name"></label>' +
+        '<label class="field"><span class="field__label">Age (years)</span><input class="input" id="p-age" type="number" min="1" max="99" value="' + s.profile.age + '"></label>' +
+        '<label class="field"><span class="field__label">Default language</span><select class="select" id="p-lang"><option value="en"' + (s.lang === 'en' ? ' selected' : '') + '>English</option><option value="tl"' + (s.lang === 'tl' ? ' selected' : '') + '>Tagalog</option></select></label></div>' +
+        '<div class="profile-age-group"><h3 class="card__title">Age group</h3><p class="field__hint">This guides the recommended symbol grid size.</p><div class="choices age-choices">' +
+        ageOptions.map(function (option) { return '<button type="button" class="choice choice--age" data-age="' + option[0] + '" aria-pressed="' + (s.ageGroup === option[0]) + '"><span class="choice__t">' + option[1] + '</span><span class="choice__d">' + option[2] + '</span></button>'; }).join('') +
+        '</div></div><div class="profile-form-actions"><button class="btn btn--primary" id="p-profile-save">Save profile</button></div></div></section>';
+    $('p-age').addEventListener('input', function () {
+      var age = +$('p-age').value;
+      var group = age <= 12 ? 'early' : age <= 17 ? 'youth' : 'adult';
+      el.vProfile.querySelectorAll('[data-age]').forEach(function (button) { button.setAttribute('aria-pressed', String(button.dataset.age === group)); });
+    });
+    el.vProfile.querySelectorAll('[data-age]').forEach(function (button) {
+      button.addEventListener('click', function () { el.vProfile.querySelectorAll('[data-age]').forEach(function (item) { item.setAttribute('aria-pressed', String(item === button)); }); });
+    });
+    $('p-profile-save').addEventListener('click', function () {
+      var name = $('p-name').value.trim() || 'Guest Child';
+      var age = Math.max(1, Math.min(99, +$('p-age').value || 10));
+      var selected = el.vProfile.querySelector('[data-age][aria-pressed="true"]');
+      var group = selected ? selected.dataset.age : (age <= 12 ? 'early' : age <= 17 ? 'youth' : 'adult');
+      Store.set({
+        profile: { name: name, age: age, initials: name.split(/\s+/).slice(0, 2).map(function (word) { return word[0]; }).join('').toUpperCase() },
+        ageGroup: group,
+        lang: $('p-lang').value
+      });
+      toast('Profile saved', 'check');
+      renderProfile();
+    });
+  }
+
+  function renderSettings() {
+    var s = Store.get();
+    var ages = [
+      ['early', 'Bata', '3–12 taon', '<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="24" cy="23" r="15"/><path d="M19 21h.1M29 21h.1M19 29c2 3 8 3 10 0"/></svg>'],
+      ['youth', 'Kabataan', '13–17 taon', '<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="14" y="14" width="20" height="28" rx="5"/><path d="M19 14v-3a5 5 0 0110 0v3M14 24h20M20 24v18M28 24v18M20 31h8"/></svg>'],
+      ['adult', 'Matanda', '18+ taon', UI.user]
+    ];
+    var sizes = [['large', '3x3'], ['medium', '4x4'], ['compact', '5x5']];
+    var recommendedSize = { early: 'large', youth: 'medium', adult: 'compact' }[s.ageGroup] || 'medium';
+    var visibleTools = s.communicationTools || ['symbols', 'sentences', 'keyboard', 'drawing'];
+
+    el.vSettings.innerHTML =
+      '<section class="settings-intro"><div><span class="u-eyebrow">CAREGIVER / SPED TEACHER</span><h2>Board settings</h2><p>Choose the tools and display options that work best for your communicator.</p></div><span class="settings-save-note">Changes apply after you select Save settings.</span></section>' +
       '<div class="formgrid">' +
 
         '<div class="col">' +
-          '<div class="card"><div class="card__body">' +
-            '<h3 class="card__title">Communicator profile</h3>' +
+          '<div class="card" id="settings-profile"><div class="card__body">' +
+            '<h3 class="card__title">User’s Name and Age</h3>' +
             '<p class="field__hint" style="margin-top:6px">Used to auto-select grid density and speech defaults.</p>' +
             '<div style="margin-top:22px">' +
-              '<label class="field"><span class="field__label">Display name</span>' +
+              '<label class="field profile-name"><span class="field__label">User’s name</span>' +
                 '<input class="input" id="p-name" value="' + esc(s.profile.name) + '" maxlength="40"></label>' +
-              '<label class="field"><span class="field__label">Age</span>' +
+                '<label class="field profile-age"><span class="field__label">Age (years)</span>' +
                 '<input class="input" id="p-age" type="number" min="1" max="99" value="' + s.profile.age + '"></label>' +
               '<label class="field" style="margin-bottom:0"><span class="field__label">Default language</span>' +
                 '<select class="select" id="p-lang">' +
@@ -187,35 +295,41 @@
             '</div>' +
           '</div></div>' +
 
-          '<div class="card"><div class="card__body">' +
-            '<h3 class="card__title">Age-adaptive grid</h3>' +
-            '<p class="field__hint" style="margin-top:6px">Task 2 — three density presets that resize the board automatically.</p>' +
-            '<div class="choices" style="margin-top:20px">' +
+          '<div class="card" id="settings-profile-age"><div class="card__body">' +
+            '<h3 class="card__title">Age group</h3>' +
+            '<div class="choices age-choices" style="margin-top:20px">' +
               ages.map(function (a) {
-                return '<button class="choice" data-age="' + a[0] + '" aria-pressed="' + (s.ageGroup === a[0]) + '">' +
-                  '<span class="choice__mark"></span>' +
-                  '<span><span class="choice__t">' + a[1] + '</span>' +
-                  '<span class="choice__d">' + a[2] + '</span></span></button>';
+                return '<button class="choice choice--age" data-age="' + a[0] + '" aria-pressed="' + (s.ageGroup === a[0]) + '">' +
+                  a[3] + '<span class="choice__t">' + a[1] + '</span><span class="choice__d">' + a[2] + '</span></button>';
               }).join('') +
             '</div>' +
           '</div></div>' +
         '</div>' +
 
         '<div class="col">' +
-          '<div class="card"><div class="card__body">' +
-            '<h3 class="card__title">Board appearance</h3>' +
+          '<div class="card" id="settings-layout"><div class="card__body">' +
+            '<h3 class="card__title">Display &amp; AAC Board Density</h3>' +
             '<div style="margin-top:20px">' +
-              '<div class="field__label" style="margin-bottom:8px">Symbol size</div>' +
-              '<div class="choices" style="grid-template-columns:repeat(3,minmax(0,1fr))">' +
+              '<div class="field__label" style="margin-bottom:4px">GRID DIMENSIONS</div>' +
+              '<p class="field__hint">Columns of the category grid. Recommended for ' + (s.ageGroup === 'adult' ? 'Adult: 5x5.' : s.ageGroup === 'early' ? 'Child: 3x3.' : 'Youth: 4x4.') + '</p>' +
+              '<div class="choices density-choices" style="grid-template-columns:repeat(3,minmax(0,1fr));margin-top:12px">' +
                 sizes.map(function (z) {
-                  return '<button class="choice" data-size="' + z[0] + '" aria-pressed="' + (s.symbolSize === z[0]) + '" ' +
+                  return '<button class="choice choice--density" data-size="' + z[0] + '" aria-pressed="' + (s.symbolSize === z[0]) + '" ' +
                     'style="justify-content:center;align-items:center;padding:14px">' +
-                    '<span class="choice__t">' + z[1] + '</span></button>';
+                    '<span class="choice__t">' + z[1] + '</span>' + (z[0] === recommendedSize ? '<small>RECOMMENDED</small>' : '') + '</button>';
                 }).join('') +
               '</div>' +
             '</div>' +
             '<hr class="card__rule" style="margin-top:24px">' +
             '<div style="margin-top:8px">' +
+              '<div class="field__label" id="settings-tools">COMMUNICATION TOOLS</div>' +
+              '<div class="switchrow"><span><span class="switchrow__t">Quick sentences</span><span class="switchrow__d">Show ready-made phrases on the board</span></span><label class="switch"><input type="checkbox" id="p-tool-sentences"' + (visibleTools.indexOf('sentences') >= 0 ? ' checked' : '') + '><span class="switch__track"><span class="switch__knob"></span></span></label></div>' +
+              '<div class="switchrow"><span><span class="switchrow__t">On-screen keyboard</span><span class="switchrow__d">Show the text-to-speech keyboard</span></span><label class="switch"><input type="checkbox" id="p-tool-keyboard"' + (visibleTools.indexOf('keyboard') >= 0 ? ' checked' : '') + '><span class="switch__track"><span class="switch__knob"></span></span></label></div>' +
+              '<div class="switchrow"><span><span class="switchrow__t">Drawing pad</span><span class="switchrow__d">Show the draw-and-match tool</span></span><label class="switch"><input type="checkbox" id="p-tool-drawing"' + (visibleTools.indexOf('drawing') >= 0 ? ' checked' : '') + '><span class="switch__track"><span class="switch__knob"></span></span></label></div>' +
+              '<label class="field"><span class="field__label">Quick sentences (English | Tagalog, one per line)</span><textarea class="textarea" id="p-quick-phrases" rows="4">' + esc((s.quickPhrases || []).map(function (phrase) { return phrase.en + ' | ' + phrase.tl; }).join('\n')) + '</textarea></label>' +
+              '<div class="settings-a11y" id="settings-accessibility"><h4>Accessibility</h4><div class="switchrow"><span><span class="switchrow__t">Text-only board</span><span class="switchrow__d">Hide pictures and show labels</span></span><label class="switch"><input type="checkbox" id="p-textonly"' + (s.textOnly ? ' checked' : '') + '><span class="switch__track"><span class="switch__knob"></span></span></label></div>' +
+              '<div class="switchrow"><span><span class="switchrow__t">Haptic feedback</span><span class="switchrow__d">Vibrate on symbol selection when supported</span></span><label class="switch"><input type="checkbox" id="p-haptic"' + (s.hapticFeedback ? ' checked' : '') + '><span class="switch__track"><span class="switch__knob"></span></span></label></div>' +
+              '<label class="field"><span class="field__label">Text size</span><select class="select" id="p-fontsize"><option value="normal"' + ((s.fontScale || 'normal') === 'normal' ? ' selected' : '') + '>Standard</option><option value="large"' + (s.fontScale === 'large' ? ' selected' : '') + '>Large</option><option value="xlarge"' + (s.fontScale === 'xlarge' ? ' selected' : '') + '>Extra large</option></select></label>' +
               '<div class="switchrow">' +
                 '<span><span class="switchrow__t">Speech output</span>' +
                 '<span class="switchrow__d">Speak each phrase aloud on Speak</span></span>' +
@@ -228,10 +342,11 @@
                 '<label class="switch"><input type="checkbox" id="p-sub"' + (s.lang ? ' checked' : '') +
                   '><span class="switch__track"><span class="switch__knob"></span></span></label>' +
               '</div>' +
+              '</div>' +
             '</div>' +
           '</div></div>' +
 
-          '<div class="card"><div class="card__body">' +
+          '<div class="card" id="settings-security"><div class="card__body">' +
             '<h3 class="card__title">Security</h3>' +
             '<div style="margin-top:20px">' +
               '<label class="field" style="margin-bottom:0"><span class="field__label">Caregiver PIN</span>' +
@@ -241,38 +356,41 @@
             '<hr class="card__rule" style="margin-top:24px">' +
             '<div class="rowend" style="margin-top:24px">' +
               '<button class="btn" id="p-reset">Reset board</button>' +
-              '<button class="btn btn--primary" id="p-save">Save changes</button>' +
+              '<button class="btn" id="p-onboarding">Preview setup</button>' +
+              '<button class="btn btn--primary" id="p-save">Save settings</button>' +
             '</div>' +
           '</div></div>' +
         '</div>' +
 
       '</div>';
 
-    el.vProfile.querySelectorAll('[data-age]').forEach(function (b) {
-      b.addEventListener('click', function () {
-        Store.set({ ageGroup: b.dataset.age });
-        toast('Grid preset: ' + b.querySelector('.choice__t').textContent, 'grid');
-      });
-    });
-    el.vProfile.querySelectorAll('[data-size]').forEach(function (b) {
+    var profileColumn = el.vSettings.querySelector('#settings-profile');
+    if (profileColumn && profileColumn.parentNode) profileColumn.parentNode.remove();
+    el.vSettings.querySelectorAll('[data-size]').forEach(function (b) {
       b.addEventListener('click', function () { Store.set({ symbolSize: b.dataset.size }); });
     });
-
     $('p-save').addEventListener('click', function () {
-      var name = $('p-name').value.trim() || 'Guest Child';
       var pin = ($('p-pin').value || '').replace(/\D/g, '').slice(0, 4);
+      var communicationTools = ['symbols'];
+      if ($('p-tool-sentences').checked) communicationTools.push('sentences');
+      if ($('p-tool-keyboard').checked) communicationTools.push('keyboard');
+      if ($('p-tool-drawing').checked) communicationTools.push('drawing');
+      var quickPhrases = $('p-quick-phrases').value.split(/\r?\n/).map(function (line) {
+        var pair = line.split('|');
+        var en = (pair[0] || '').trim(), tl = (pair[1] || pair[0] || '').trim();
+        return en ? { en: en, tl: tl || en } : null;
+      }).filter(Boolean).slice(0, 12);
       Store.set({
-        profile: {
-          name: name,
-          age: Math.max(1, Math.min(99, +$('p-age').value || 10)),
-          initials: name.split(/\s+/).slice(0, 2).map(function (w) { return w[0]; }).join('').toUpperCase()
-        },
-        lang: $('p-lang').value,
         speechOutput: $('p-speech').checked,
+        textOnly: $('p-textonly').checked,
+        hapticFeedback: $('p-haptic').checked,
+        fontScale: $('p-fontsize').value,
+        communicationTools: communicationTools,
+        quickPhrases: quickPhrases,
         pin: pin.length === 4 ? pin : Store.get().pin
       });
       toast('Settings saved', 'check');
-      renderProfile();
+      renderSettings();
     });
 
     $('p-reset').addEventListener('click', function () {
@@ -281,17 +399,46 @@
       toast('Board reset');
       go('dashboard');
     });
+    $('p-onboarding').addEventListener('click', function () { location.href = 'index.html?setup=1'; });
   }
 
   /* ════════════════════════════════════════════════════ VOCABULARY ══ */
   function renderVocabulary() {
     var s = Store.get();
-    var cats = global.CC.CATEGORIES;
+    var cats = Store.categories().slice();
+    var categoryOrder = s.categoryOrder || [];
+    var categoryBase = cats.slice();
+    cats.sort(function (a, b) {
+      var ai = categoryOrder.indexOf(a.id), bi = categoryOrder.indexOf(b.id);
+      if (ai < 0) ai = categoryOrder.length + categoryBase.indexOf(a);
+      if (bi < 0) bi = categoryOrder.length + categoryBase.indexOf(b);
+      return ai - bi;
+    });
+    var symbols = Store.symbols().slice();
+    var symbolOrder = s.symbolOrder || [];
+    var symbolBase = symbols.slice();
+    symbols.sort(function (a, b) {
+      var ai = symbolOrder.indexOf(a.id), bi = symbolOrder.indexOf(b.id);
+      if (ai < 0) ai = symbolOrder.length + symbolBase.indexOf(a);
+      if (bi < 0) bi = symbolOrder.length + symbolBase.indexOf(b);
+      return ai - bi;
+    });
+    var categoryFilters = [['all','All'],['core','Core']].concat(cats.map(function (c) {
+      return [c.id, CAT_LABEL_TL[c.id] ? CAT_LABEL_TL[c.id].replace(/\b\w/g, function (letter) { return letter.toUpperCase(); }) : c.label];
+    }));
 
     el.vVocab.innerHTML =
-      '<section class="psection">' +
-        '<h2 class="psection__title">Custom vocabulary uploader</h2>' +
-        '<div class="card"><div class="card__body">' +
+      '<div class="vocab-shortcuts" role="group" aria-label="Additional vocabulary tools">' +
+        '<button type="button" class="btn" data-open-panel="vocab-manage" aria-controls="vocab-manage">' + UI.folderPlus + '<span>Board layout and categories</span></button>' +
+        '<button type="button" class="btn" data-open-panel="vocab-uploader" aria-controls="vocab-uploader">' + UI.image + '<span>Custom vocabulary uploader</span></button>' +
+      '</div>' +
+      '<dialog class="vocab-dialog" id="vocab-dialog" aria-label="Vocabulary tools">' +
+      '<section class="vocab-panel" id="vocab-manage" hidden><div class="card"><div class="card__body"><div class="vocab-panel__head"><div><h2>Manage categories</h2><p class="field__hint">Add categories, control which appear on the board, or change their order.</p></div><button type="button" class="btn vocab-panel__close" data-close-panel="vocab-manage">Close</button></div>' +
+        '<div class="category-add"><input class="input" id="new-category-label" maxlength="24" placeholder="New category name"><button class="btn btn--primary" id="add-category">' + UI.plus + '<span>Add category</span></button></div><div class="category-manager">' +
+        cats.map(function (c, i) { var hidden = (s.hiddenCategories || []).indexOf(c.id) >= 0; return '<div class="category-manager__row"><label><input type="checkbox" data-cat-visible="' + c.id + '"' + (hidden ? '' : ' checked') + '> ' + esc(c.label) + '</label><button class="btn" data-move="' + c.id + '" data-dir="-1" aria-label="Move ' + esc(c.label) + ' up"' + (i === 0 ? ' disabled' : '') + '>↑</button><button class="btn" data-move="' + c.id + '" data-dir="1" aria-label="Move ' + esc(c.label) + ' down"' + (i === cats.length - 1 ? ' disabled' : '') + '>↓</button></div>'; }).join('') +
+      '</div></div></div></section>' +
+      '<section class="vocab-panel" id="vocab-uploader" hidden>' +
+        '<div class="card"><div class="card__body"><div class="vocab-panel__head"><div><h2>Add a symbol</h2><p class="field__hint">Upload a picture and add English and Tagalog labels.</p></div><button type="button" class="btn vocab-panel__close" data-close-panel="vocab-uploader">Close</button></div>' +
           '<div class="formgrid" style="align-items:start">' +
             '<div>' +
               '<label class="field"><span class="field__label">Symbol image</span>' +
@@ -330,24 +477,94 @@
             '</div>' +
           '</div>' +
         '</div></div>' +
-      '</section>' +
-
-      '<section class="psection">' +
-        '<h2 class="psection__title">Board vocabulary <span class="u-muted" style="font-weight:400">' +
-          '(' + Store.symbols().length + ' symbols)</span></h2>' +
-        '<div class="vocabgrid">' +
-          Store.symbols().map(function (x) {
+      '</section></dialog>' +
+      '<section class="vocab-library">' +
+        '<div class="vocab-toolbar"><label class="vocab-search">' + UI.search + '<input type="search" id="vocab-search" placeholder="Search symbol label..." aria-label="Search symbols"></label>' +
+          '<div class="vocab-filters" role="group" aria-label="Filter symbols">' +
+            categoryFilters.map(function (f, i) { return '<button type="button" class="vocab-filter' + (i === 0 ? ' is-active' : '') + '" data-filter="' + esc(f[0]) + '">' + esc(f[1]) + '</button>'; }).join('') +
+          '</div></div>' +
+        '<div class="vocabgrid" id="vocab-grid">' +
+          symbols.map(function (x) {
             var l = Store.labels(x);
-            return '<div class="vtile">' +
-              '<div class="vtile__art">' + (x.dataUrl ? '<img src="' + x.dataUrl + '" alt="">' : x.icon) + '</div>' +
+            var isCore = CORE_SYMBOLS.indexOf(x.id) >= 0;
+            var isCustom = (s.customSymbols || []).some(function (custom) { return custom.id === x.id; });
+            var hiddenSymbol = (s.hiddenSymbols || []).indexOf(x.id) >= 0;
+            return '<div class="vtile' + (hiddenSymbol ? ' is-board-hidden' : '') + '" data-core="' + isCore + '" data-cat="' + esc(x.cat) + '" data-search="' + esc((l.primary + ' ' + l.secondary + ' ' + x.en + ' ' + x.tl).toLowerCase()) + '">' +
+              '<div class="vtile__head"><span class="vtile__tag">' + (isCustom ? 'CUSTOM' : isCore ? 'CORE' : (CAT_LABEL_TL[x.cat] || esc(x.cat)).toUpperCase()) + '</span>' +
+              (isCustom ? '<button type="button" class="vtile__remove" data-remove-symbol="' + esc(x.id) + '" aria-label="Remove ' + esc(l.primary) + '" title="Remove symbol">' + UI.trash + '</button>' : '') +
+              '</div><div class="vocab-symbol-actions">' +
+              '<button type="button" class="vocab-symbol-toggle" data-symbol-toggle="' + esc(x.id) + '" aria-pressed="' + String(!hiddenSymbol) + '" aria-label="' + (hiddenSymbol ? 'Show ' : 'Hide ') + esc(l.primary) + ' ' + (hiddenSymbol ? 'on' : 'from') + ' the board" title="' + (hiddenSymbol ? 'Show on board' : 'Hide from board') + '">' + (hiddenSymbol ? 'Show' : 'Hide') + '</button>' +
+              '<span class="vocab-symbol-order"><button type="button" data-symbol-move="' + esc(x.id) + '" data-dir="-1" aria-label="Move ' + esc(l.primary) + ' earlier" title="Move earlier">↑</button><button type="button" data-symbol-move="' + esc(x.id) + '" data-dir="1" aria-label="Move ' + esc(l.primary) + ' later" title="Move later">↓</button></span></div>' +
+              '<div class="vtile__art">' + (x.dataUrl || x.imageUrl ? '<img src="' + (x.dataUrl || x.imageUrl) + '" alt="">' : x.icon) + '</div>' +
               '<div class="vtile__l1">' + esc(l.primary) + '</div>' +
               '<div class="vtile__l2">' + esc(l.secondary) + '</div>' +
-              '<span class="vtile__cat">' + esc((cats.filter(function (c) { return c.id === x.cat; })[0] || {}).label || x.cat) + '</span>' +
               '</div>';
           }).join('') +
         '</div>' +
+        '<p class="vocab-no-results" id="vocab-empty" hidden>No symbols match your search.</p>' +
       '</section>';
 
+    function openVocabularyTool(panelId) {
+      var dialog = $('vocab-dialog');
+      $('vocab-manage').hidden = panelId !== 'vocab-manage';
+      $('vocab-uploader').hidden = panelId !== 'vocab-uploader';
+      if (!dialog.open) dialog.showModal();
+      var target = panelId === 'vocab-manage' ? $('new-category-label') : $('v-en');
+      if (target) target.focus({ preventScroll: true });
+    }
+    var vocabDialog = $('vocab-dialog');
+    vocabDialog.addEventListener('click', function (event) { if (event.target === vocabDialog) vocabDialog.close(); });
+    el.vVocab.querySelectorAll('[data-cat-visible]').forEach(function (input) { input.addEventListener('change', function () { var hidden = Store.get().hiddenCategories.slice(); hidden = input.checked ? hidden.filter(function (id) { return id !== input.dataset.catVisible; }) : hidden.concat(input.dataset.catVisible); Store.set({ hiddenCategories: hidden }); renderVocabulary(); openVocabularyTool('vocab-manage'); }); });
+    el.vVocab.querySelectorAll('[data-close-panel]').forEach(function (button) { button.addEventListener('click', function () { vocabDialog.close(); }); });
+    el.vVocab.querySelectorAll('[data-open-panel]').forEach(function (button) { button.addEventListener('click', function () {
+      openVocabularyTool(button.dataset.openPanel);
+    }); });
+    $('add-category').addEventListener('click', function () {
+      var label = $('new-category-label').value.trim();
+      if (!label) { $('new-category-label').focus(); return; }
+      var current = Store.get().customCategories || [];
+      if (Store.categories().some(function (category) { return category.label.toLowerCase() === label.toLowerCase(); })) { toast('That category already exists'); return; }
+      current.push({ id: 'custom-' + Date.now().toString(36), label: label });
+      Store.set({ customCategories: current });
+      toast('Category added', 'check');
+      renderVocabulary();
+      openVocabularyTool('vocab-manage');
+    });
+    el.vVocab.querySelectorAll('[data-move]').forEach(function (button) { button.addEventListener('click', function () { var order = cats.map(function (c) { return c.id; }); var i = order.indexOf(button.dataset.move), j = i + (+button.dataset.dir); if (i < 0 || j < 0 || j >= order.length) return; var tmp = order[i]; order[i] = order[j]; order[j] = tmp; Store.set({ categoryOrder: order }); renderVocabulary(); openVocabularyTool('vocab-manage'); }); });
+    el.vVocab.querySelectorAll('[data-remove-symbol]').forEach(function (button) { button.addEventListener('click', function () { var id = button.dataset.removeSymbol, st = Store.get(); Store.set({ customSymbols: st.customSymbols.filter(function (x) { return x.id !== id; }), hiddenSymbols: st.hiddenSymbols.filter(function (x) { return x !== id; }), symbolOrder: st.symbolOrder.filter(function (x) { return x !== id; }) }); renderVocabulary(); }); });
+    el.vVocab.querySelectorAll('[data-symbol-toggle]').forEach(function (button) { button.addEventListener('click', function () {
+      var hidden = Store.get().hiddenSymbols.slice(), id = button.dataset.symbolToggle;
+      hidden = hidden.indexOf(id) >= 0 ? hidden.filter(function (item) { return item !== id; }) : hidden.concat(id);
+      Store.set({ hiddenSymbols: hidden }); renderVocabulary();
+    }); });
+    el.vVocab.querySelectorAll('[data-symbol-move]').forEach(function (button) { button.addEventListener('click', function () {
+      var allSymbols = Store.symbols(), order = Store.get().symbolOrder.slice();
+      allSymbols.forEach(function (symbol) { if (order.indexOf(symbol.id) < 0) order.push(symbol.id); });
+      var i = order.indexOf(button.dataset.symbolMove), j = i + Number(button.dataset.dir);
+      if (i < 0 || j < 0 || j >= order.length) return;
+      var tmp = order[i]; order[i] = order[j]; order[j] = tmp;
+      Store.set({ symbolOrder: order }); renderVocabulary();
+    }); });
+    var activeFilter = 'all';
+    function filterVocabulary() {
+      var query = $('vocab-search').value.trim().toLowerCase();
+      var visible = 0;
+      el.vVocab.querySelectorAll('#vocab-grid .vtile').forEach(function (tile) {
+        var categoryMatch = activeFilter === 'all' || (activeFilter === 'core' ? tile.dataset.core === 'true' : tile.dataset.cat === activeFilter);
+        var searchMatch = !query || tile.dataset.search.indexOf(query) >= 0;
+        tile.hidden = !(categoryMatch && searchMatch);
+        if (!tile.hidden) visible++;
+      });
+      $('vocab-empty').hidden = visible > 0;
+    }
+    $('vocab-search').addEventListener('input', filterVocabulary);
+    el.vVocab.querySelectorAll('[data-filter]').forEach(function (button) {
+      button.addEventListener('click', function () {
+        activeFilter = button.dataset.filter;
+        el.vVocab.querySelectorAll('[data-filter]').forEach(function (filter) { filter.classList.toggle('is-active', filter === button); });
+        filterVocabulary();
+      });
+    });
     wireUploader();
   }
 
@@ -389,7 +606,7 @@
       $('pv-en').textContent = $('v-en').value.trim() || 'Balloon';
       $('pv-tl').textContent = $('v-tl').value.trim() || 'Balon';
       var c = $('v-cat').value;
-      $('pv-cat').textContent = (global.CC.CATEGORIES.filter(function (x) { return x.id === c; })[0] || {}).label || c;
+      $('pv-cat').textContent = (Store.categories().filter(function (x) { return x.id === c; })[0] || {}).label || c;
     }
     ['v-en', 'v-tl', 'v-cat'].forEach(function (id) {
       $(id).addEventListener('input', syncPreview);
@@ -421,33 +638,24 @@
   /* ═══════════════════════════════════════════════════ GEOFENCING ══ */
   function renderGeofencing() {
     var s = Store.get();
-
-    /* schematic map — percent positions so no map tiles/network are needed */
-    var spots = { home: [22, 68], school: [58, 34], clinic: [80, 66] };
-    var pins = s.geofences.map(function (g) {
-      var p = spots[g.id] || [50, 50];
-      var on = g.id === s.activeContext;
-      return '<div class="map__zone" style="left:' + p[0] + '%;top:' + p[1] + '%;width:' +
-          Math.max(14, g.radius / 6) + '%;aspect-ratio:1"></div>';
-    }).join('') + s.geofences.map(function (g) {
-      var p = spots[g.id] || [50, 50];
-      var on = g.id === s.activeContext;
-      return '<div class="map__pin' + (on ? ' is-active' : '') + '" style="left:' + p[0] + '%;top:' + p[1] + '%">' +
-        UI.pin + '<b>' + esc(g.label) + (on ? ' · active' : '') + '</b></div>';
-    }).join('');
+    var focusZone = Store.geofence(s.activeContext) || s.geofences[0];
+    var focusParts = focusZone ? focusZone.coords.split(',').map(Number) : [14.5995, 120.9842];
+    var focusLat = isFinite(focusParts[0]) ? focusParts[0] : 14.5995;
+    var focusLng = isFinite(focusParts[1]) ? focusParts[1] : 120.9842;
+    var mapBounds = [focusLng - 0.035, focusLat - 0.022, focusLng + 0.035, focusLat + 0.022].map(function (n) { return n.toFixed(5); }).join('%2C');
+    var mapUrl = 'https://www.openstreetmap.org/export/embed.html?bbox=' + mapBounds + '&layer=mapnik&marker=' + focusLat.toFixed(5) + '%2C' + focusLng.toFixed(5);
 
     el.vGeo.innerHTML =
       '<section class="psection">' +
         '<h2 class="psection__title">Geofence &amp; location context</h2>' +
         '<div class="card"><div class="card__body">' +
-          '<div class="map">' + pins + '</div>' +
-          '<p class="field__hint" style="margin-top:14px">Schematic preview. On device this reads live GPS; ' +
-            'the active zone drives the board header chip and re-ranks the Top-5 predictions.</p>' +
+          '<div class="map"><iframe class="map__frame" title="OpenStreetMap geofencing map" src="' + mapUrl + '" loading="lazy" referrerpolicy="no-referrer"></iframe></div>' +
+          '<p class="field__hint" style="margin-top:14px">Map tiles from OpenStreetMap. The active zone drives the board header and contextual word suggestions.</p>' +
         '</div></div>' +
       '</section>' +
 
       '<section class="psection">' +
-        '<h2 class="psection__title">Saved locations</h2>' +
+        '<h2 class="psection__title">Saved Geofencing</h2>' +
         '<div class="geolist">' +
           s.geofences.map(function (g) {
             return '<div class="geoitem' + (g.id === s.activeContext ? ' is-on' : '') + '" data-geo="' + g.id + '">' +
@@ -562,7 +770,7 @@
            ['Phrases built', fx(s.stats.phrasesBuilt)],
            ['Avg. phrase length', (s.stats.phrasesBuilt ? (s.stats.symbolsTapped / s.stats.phrasesBuilt).toFixed(1) : '0') + ' sym'],
            ['Vocabulary size', fx(Store.symbols().length)],
-           ['Categories', String(global.CC.CATEGORIES.length)]]
+           ['Categories', String(Store.categories().length)]]
           .map(function (p) {
             return '<div class="card stat"><span class="stat__l">' + p[0] + '</span>' +
               '<span class="stat__v' + (String(p[1]).length > 6 ? ' stat__v--sm' : '') + '">' + esc(p[1]) + '</span></div>';
@@ -602,12 +810,33 @@
   }
 
   /* ══════════════════════════════════════════════════════ ROUTING ══ */
+  function renderAnalyticsReference() {
+    var s = Store.get();
+    var phrases = s.history || [];
+    var historyRows = phrases.map(function (entry) {
+      var words = (entry.ids || []).map(function (id) { var symbol = Store.symbol(id); return symbol ? Store.labels(symbol).primary : id; });
+      return '<tr><td>' + esc(when(entry.at)) + '</td><td>' + esc(words.join(' ')) + '</td><td>' + words.length + ' / —</td><td>Not tracked</td></tr>';
+    }).join('');
+    el.vStats.innerHTML =
+      '<div class="analytics-cards">' +
+        '<article class="dash-stat"><div class="dash-stat__label dash-stat__label--purple">' + UI.spark + ' KEYSTROKE SAVINGS</div><strong>—</strong><p>No measured phrases yet.</p></article>' +
+        '<article class="dash-stat"><div class="dash-stat__label dash-stat__label--purple">' + UI.spark + ' PREDICTION USE</div><strong>—</strong><p>Prediction usage is not tracked yet.</p></article>' +
+        '<article class="dash-stat"><div class="dash-stat__label dash-stat__label--blue">' + UI.trend + ' TOTAL SPOKEN PHRASES</div><strong>' + fx(s.stats.phrasesBuilt) + '</strong><p>Total communication utterances recorded.</p></article>' +
+        '<article class="dash-stat"><div class="dash-stat__label dash-stat__label--green">' + UI.chart + ' VOCABULARY</div><strong>' + fx(Store.symbols().length) + ' Symbols</strong><p>Total AAC symbols available in the board library.</p></article>' +
+      '</div>' +
+      '<section class="card analytics-logs"><div class="analytics-logs__title">' + UI.clock + '<h2>Full Communication Logs History</h2></div>' +
+        '<div class="analytics-table-wrap"><table class="tbl analytics-table"><thead><tr><th>Timestamp</th><th>Phrase Output</th><th>Taps (with / without prediction)</th><th>Prediction Assisted</th></tr></thead>' +
+          (historyRows ? '<tbody>' + historyRows + '</tbody>' : '<tbody><tr><td colspan="4" class="analytics-empty">No logs recorded yet. Speak a phrase on the AAC board to log session data!</td></tr></tbody>') +
+        '</table></div></section>';
+  }
+
   var RENDER = {
-    dashboard: renderDashboard,
+    dashboard: renderDashboardReference,
     profile: renderProfile,
+    settings: renderSettings,
     vocabulary: renderVocabulary,
     geofencing: renderGeofencing,
-    analytics: renderAnalytics
+    analytics: renderAnalyticsReference
   };
 
   function go(view) {
@@ -619,20 +848,50 @@
       if (a.dataset.view === view) a.setAttribute('aria-current', 'page');
       else a.removeAttribute('aria-current');
     });
-    document.getElementById('page-title').textContent = {
-      dashboard: 'Caregiver Dashboard',
-      profile: 'Age & Profile Settings',
-      vocabulary: 'Custom Vocabulary',
-      geofencing: 'Geofencing & Location',
-      analytics: 'Board Analytics'
+    var headings = {
+      dashboard: ['🏠', 'Caregiver & SPED Teacher Dashboard', 'Manage communication settings for ' + Store.get().profile.name + '.'],
+      profile: ['👤', 'Profile', 'Update the communicator’s name, age group, and language.'],
+      settings: ['⚙', 'Settings', 'Manage board layout, communication tools, accessibility, and security.'],
+      vocabulary: ['📚', 'Vocabulary', 'Add symbols and organize the communication board.'],
+      geofencing: ['📍', 'Geofencing', 'Set places that help personalize communication suggestions.'],
+      analytics: ['📊', 'Analytics', 'Review phrase activity and communication patterns.']
     }[view];
-    document.getElementById('page-sub').textContent = {
-      dashboard: 'Monitor the communicator, connection, location context and board performance.',
-      profile: 'Set age group, grid density and symbol defaults for the communication board.',
-      vocabulary: 'Upload your own symbols and label them in Tagalog and English.',
-      geofencing: 'Configure GPS zones and time-of-day routine rules.',
-      analytics: 'See how the board is being used over time.'
+    document.getElementById('page-title').innerHTML = '<span class="phead__icon" id="page-icon" aria-hidden="true">' + headings[0] + '</span>' + headings[1];
+    document.getElementById('page-sub').textContent = headings[2];
+    var headActions = {
+      dashboard: '<button class="btn btn--primary" data-head-action="add-symbol">' + UI.plus + '<span>Add symbol</span></button>',
+      profile: '',
+      settings: '',
+      vocabulary: '<button class="btn" data-head-action="categories" aria-controls="vocab-manage">' + UI.folderPlus + '<span>Manage categories</span></button><button class="btn btn--primary" data-head-action="add-symbol" aria-controls="vocab-uploader">' + UI.plus + '<span>Add symbol</span></button>',
+      geofencing: '<button class="btn btn--primary" data-head-action="location">' + UI.pin + '<span>Use my location</span></button><button class="btn btn--success" data-head-action="add-zone">' + UI.plus + '<span>Add location</span></button>',
+      analytics: '<button class="btn btn--primary" data-head-action="export">↓<span>Export CSV</span></button>'
     }[view];
+    $('page-actions').className = 'phead__actions phead__actions--' + view;
+    $('page-actions').innerHTML = headActions;
+    $('page-actions').onclick = function (event) {
+      var action = event.target.closest('[data-head-action]');
+      if (!action) return;
+      if (action.dataset.headAction === 'add-symbol') {
+        if (view !== 'vocabulary') { go('vocabulary'); }
+        var symbolTool = $('view-vocabulary').querySelector('[data-open-panel="vocab-uploader"]');
+        if (symbolTool) symbolTool.click();
+      }
+      if (action.dataset.headAction === 'categories') {
+        var categoryTool = $('view-vocabulary').querySelector('[data-open-panel="vocab-manage"]');
+        if (categoryTool) categoryTool.click();
+      }
+      if (action.dataset.headAction === 'location') {
+        if (!navigator.geolocation) { toast('Hindi available ang lokasyon sa device na ito'); return; }
+        navigator.geolocation.getCurrentPosition(function (position) {
+          saveZone(position.coords.latitude + ', ' + position.coords.longitude);
+        }, function () { toast('Hindi makuha ang lokasyon. Maaari kang magdagdag ng zone gamit ang coordinates.'); });
+      }
+      if (action.dataset.headAction === 'add-zone') {
+        var coords = prompt('Coordinates (latitude, longitude):', '14.5995, 120.9842');
+        if (coords) saveZone(coords);
+      }
+      if (action.dataset.headAction === 'export') exportLogs();
+    };
     RENDER[view]();
     if (location.hash.slice(1) !== view) history.replaceState(null, '', '#' + view);
     window.scrollTo({ top: 0, behavior: 'auto' });
@@ -643,6 +902,7 @@
     Store.init();
     el.vDash = $('view-dashboard');
     el.vProfile = $('view-profile');
+    el.vSettings = $('view-settings');
     el.vVocab = $('view-vocabulary');
     el.vGeo = $('view-geofencing');
     el.vStats = $('view-analytics');
@@ -652,7 +912,8 @@
       a.addEventListener('click', function (e) { e.preventDefault(); go(a.dataset.view); });
     });
 
-    document.getElementById('pnav-logout').addEventListener('click', function () {
+    document.getElementById('pnav-logout').addEventListener('click', function (event) {
+      event.preventDefault();
       global.CC.Pin.open(function () { location.href = 'index.html'; });
     });
 

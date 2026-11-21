@@ -42,6 +42,22 @@
       symbolSize: 'large',        // large | medium | compact
       gridDensity: 'auto',        // auto | early | youth | adult
       speechOutput: true,
+      onboardingComplete: false,
+      communicationTools: ['symbols', 'sentences', 'keyboard', 'drawing'],
+      textOnly: false,
+      hapticFeedback: true,
+      fontScale: 'normal',
+      hiddenCategories: [],
+      categoryOrder: [],
+      hiddenSymbols: [],
+      symbolOrder: [],
+      customCategories: [],
+      quickPhrases: [
+        { en: 'I need help', tl: 'Kailangan ko ng tulong' },
+        { en: 'I want water', tl: 'Gusto ko ng tubig' },
+        { en: 'I need a break', tl: 'Kailangan ko ng pahinga' },
+        { en: 'I feel happy', tl: 'Masaya ako' }
+      ],
       speakRate: 1,
       voiceURI: '',
       profile: { name: 'Guest Child', age: 11, initials: 'GC' },
@@ -63,7 +79,7 @@
           boost: ['therapy', 'medicine', 'doctor', 'tired', 'happy', 'sad', 'toilet', 'drink'] }
       ],
       /* context chip shown in the board header */
-      activeContext: 'school',
+      activeContext: '',
 
       /* --- routines: time-of-day rules per context ---------------------- */
       routines: [
@@ -99,8 +115,15 @@
       var raw = global.localStorage.getItem(KEY);
       if (raw) {
         var saved = JSON.parse(raw);
+        /* Legacy saves have no onboarding marker; keep their data and show setup once. */
         /* shallow merge, then nested merge for the two nested objects we own */
-        base = Object.assign(base, saved);
+      base = Object.assign(base, saved);
+      base.hiddenCategories = Array.isArray(saved.hiddenCategories) ? saved.hiddenCategories : [];
+      base.categoryOrder = Array.isArray(saved.categoryOrder) ? saved.categoryOrder : [];
+      base.hiddenSymbols = Array.isArray(saved.hiddenSymbols) ? saved.hiddenSymbols : [];
+      base.symbolOrder = Array.isArray(saved.symbolOrder) ? saved.symbolOrder : [];
+      base.customCategories = Array.isArray(saved.customCategories) ? saved.customCategories.filter(function (c) { return c && typeof c.id === 'string' && typeof c.label === 'string'; }) : [];
+      base.quickPhrases = Array.isArray(saved.quickPhrases) ? saved.quickPhrases : defaults().quickPhrases;
         base.profile = Object.assign(defaults().profile, saved.profile || {});
         base.stats   = Object.assign(defaults().stats,   saved.stats   || {});
       }
@@ -126,6 +149,8 @@
     }; },
     reset: function () { state = defaults(); save(); emit(); },
     /* --- derived helpers --------------------------------------------- */
+
+    categories: function () { return global.CC.CATEGORIES.concat(state.customCategories || []); },
 
     /** All symbols = built-in catalogue + caregiver uploads. */
     symbols: function () {

@@ -22,33 +22,94 @@
 
 <body>
 
-<div class="portal">
+<section class="role-picker" id="role-picker" aria-labelledby="role-title">
+  <div class="role-picker__card">
+    <a class="role-picker__brand" href="index.html">COMMUNICARE</a>
+    <p class="role-picker__eyebrow">WORKSPACE PREVIEW</p>
+    <h1 id="role-title">Choose your workspace</h1>
+    <p class="role-picker__intro">Select the experience that fits your role.</p>
+    <div class="role-picker__grid">
+      <a class="role-choice role-choice--blue" href="index.html"><span aria-hidden="true">💬</span><strong>AAC communicator</strong><small>Open the communication board</small><b>Open board <i>›</i></b></a>
+      <button class="role-choice role-choice--green" type="button" data-workspace="caregiver"><span aria-hidden="true">♡</span><strong>Caregiver / SPED teacher</strong><small>Manage a communicator’s board, vocabulary, and progress</small><b>Continue <i>›</i></b></button>
+      <button class="role-choice role-choice--orange" type="button" data-workspace="admin"><span aria-hidden="true">⚙</span><strong>Administrator</strong><small>Preview account and workspace management</small><b>Preview dashboard <i>›</i></b></button>
+    </div>
+    <p class="role-picker__note">Interface preview. Role selection does not sign in or create an account.</p>
+  </div>
+</section>
+
+<section class="admin-signin" id="admin-signin" hidden aria-labelledby="admin-signin-title">
+  <div class="admin-signin__card"><a class="role-picker__brand" href="index.html">COMMUNICARE</a><p class="role-picker__eyebrow">ADMINISTRATOR</p><h1 id="admin-signin-title">Sign in to your workspace</h1><p>Manage Communicare accounts and workspaces.</p>
+    <form id="admin-preview-form"><label for="admin-email">Work email</label><input id="admin-email" type="email" autocomplete="username" placeholder="admin@example.org" required><label for="admin-password">Password</label><input id="admin-password" type="password" autocomplete="current-password" placeholder="Enter your password" required><button class="btn btn--primary" type="submit">Sign in</button></form>
+    <button type="button" class="admin-signin__back" id="admin-signin-back">← Choose another workspace</button><p class="role-picker__note">Prototype sign-in: fields are required, but credentials are not verified by a server.</p>
+  </div>
+</section>
+
+<section class="admin-preview" id="admin-preview" hidden aria-labelledby="admin-title">
+  <header class="admin-preview__head"><a class="role-picker__brand" href="index.html">COMMUNICARE</a><button type="button" class="btn" id="admin-back">← Choose another workspace</button></header>
+  <div class="admin-preview__body">
+    <p class="role-picker__eyebrow">ADMINISTRATOR WORKSPACE · UI PREVIEW</p><h1 id="admin-title">Account management</h1><p>Review and manage caregiver and SPED workspaces.</p>
+    <div class="admin-preview__stats"><article><span>Workspaces</span><strong id="admin-workspace-count">0</strong></article><article><span>Active accounts</span><strong id="admin-active-count">0</strong></article><article><span>Pending invitations</span><strong id="admin-pending-count">0</strong></article></div>
+    <section class="admin-preview__panel"><div class="admin-preview__panel-head"><div><h2>Accounts</h2><p>Add, update, or deactivate demo accounts stored on this device.</p></div><button class="btn btn--primary" type="button" id="admin-add-account">Add account</button></div>
+      <div class="admin-preview__table-wrap"><table><thead><tr><th>Name</th><th>Email</th><th>Workspace</th><th>Role</th><th>Status</th><th>Actions</th></tr></thead><tbody id="admin-accounts-body"></tbody></table></div>
+    </section>
+    <section class="admin-preview__panel admin-activity"><div class="admin-preview__panel-head"><div><h2>Recent activity</h2><p>Sample events across the demo workspaces.</p></div><span class="admin-activity__sample">SAMPLE DATA</span></div>
+      <div class="admin-activity__list">
+        <article><span class="admin-activity__icon admin-activity__icon--blue">＋</span><div><strong>New caregiver invited</strong><p>Priya Santos · Harbor Family</p></div><time>Today · 9:42 AM</time></article>
+        <article><span class="admin-activity__icon admin-activity__icon--green">✓</span><div><strong>Workspace activated</strong><p>Sunrise Learning Center</p></div><time>Today · 8:15 AM</time></article>
+        <article><span class="admin-activity__icon admin-activity__icon--purple">↻</span><div><strong>Board profile updated</strong><p>SPED team · Maple Grove School</p></div><time>Yesterday</time></article>
+        <article><span class="admin-activity__icon admin-activity__icon--orange">!</span><div><strong>Workspace access deactivated</strong><p>Jordan Kim · Lakeside Clinic</p></div><time>Yesterday</time></article>
+      </div>
+    </section>
+    <p class="role-picker__note">Demo account data is stored in this browser only. This prototype does not provide secure authentication or shared account management.</p>
+  </div>
+</section>
+
+<dialog class="admin-account-dialog" id="admin-account-dialog" aria-labelledby="admin-account-title">
+  <form id="admin-account-form" class="admin-account-form">
+    <div class="admin-account-form__head"><div><h2 id="admin-account-title">Add account</h2><p>Set up a caregiver or SPED workspace.</p></div><button class="btn" type="button" id="admin-account-close">Close</button></div>
+    <input type="hidden" id="admin-account-id">
+    <label for="admin-account-name">Account holder name</label><input id="admin-account-name" name="name" required maxlength="80">
+    <label for="admin-account-email">Email address</label><input id="admin-account-email" name="email" type="email" required maxlength="120">
+    <label for="admin-account-workspace">Workspace name</label><input id="admin-account-workspace" name="workspace" required maxlength="80">
+    <div class="admin-account-form__row"><label for="admin-account-role">Role<select id="admin-account-role" name="role"><option>Caregiver</option><option>SPED teacher</option></select></label><label for="admin-account-status">Status<select id="admin-account-status" name="status"><option>Active</option><option>Invitation pending</option><option>Inactive</option></select></label></div>
+    <p class="admin-account-error" id="admin-account-error" role="alert" hidden></p>
+    <div class="admin-account-form__actions"><button class="btn" type="button" id="admin-account-cancel">Cancel</button><button class="btn btn--primary" type="submit">Save account</button></div>
+  </form>
+</dialog>
+
+<div class="portal" id="caregiver-portal" hidden>
 
   <!-- ══════════════════════════════════════════════ Dark nav rail ══ -->
-  <nav class="pnav" id="pnav" aria-label="Caregiver portal">
+  <nav class="pnav" id="pnav" aria-label="Caregiver and SPED teacher portal">
     <div class="pnav__brand">
       <span class="pnav__mark" aria-hidden="true">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
-          <path d="M7 8h10M7 12h10M7 16h6"/>
+          <path d="M5 5.5h14a2 2 0 012 2v9a2 2 0 01-2 2h-8l-5 3v-5H5a2 2 0 01-2-2v-7a2 2 0 012-2z"/>
+          <path d="M12 15s-4-2.4-4-5a2.2 2.2 0 014-1.2A2.2 2.2 0 0116 10c0 2.6-4 5-4 5z"/>
         </svg>
       </span>
-      <span class="pnav__name">COMMUNICARE</span>
+      <span class="pnav__brand-copy"><span class="pnav__name">COMMUNICARE</span><span class="pnav__sub">CAREGIVER PORTAL</span></span>
     </div>
 
     <hr class="pnav__rule">
 
     <div class="pnav__list">
-      <a class="navlink" href="#dashboard"   data-view="dashboard"   aria-current="page"><span data-ico="dash"></span>Dashboard</a>
-      <a class="navlink" href="#profile"     data-view="profile"     ><span data-ico="user"></span>Profile</a>
-      <a class="navlink" href="#vocabulary"  data-view="vocabulary"  ><span data-ico="book"></span>Vocabulary</a>
-      <a class="navlink" href="#geofencing"  data-view="geofencing"  ><span data-ico="pin2"></span>Geofencing</a>
-      <a class="navlink" href="#analytics"   data-view="analytics"   ><span data-ico="chart"></span>Analytics</a>
+      <span class="pnav__group-label">Overview</span>
+      <a class="navlink" href="#dashboard" data-view="dashboard" aria-current="page"><span data-ico="dash"></span>Dashboard</a>
+      <span class="pnav__group-label">Communicator</span>
+      <a class="navlink" href="#profile" data-view="profile"><span data-ico="user"></span>Profile</a>
+      <span class="pnav__group-label">Board setup</span>
+      <a class="navlink" href="#vocabulary" data-view="vocabulary"><span data-ico="book"></span>Vocabulary</a>
+      <a class="navlink" href="#settings" data-view="settings"><span data-ico="settings"></span>Settings</a>
+      <a class="navlink" href="#geofencing" data-view="geofencing"><span data-ico="pin2"></span>Geofencing</a>
+      <span class="pnav__group-label">Insights</span>
+      <a class="navlink" href="#analytics" data-view="analytics"><span data-ico="chart"></span>Analytics</a>
     </div>
 
     <div class="pnav__foot">
       <hr class="pnav__rule">
       <div class="pnav__list">
-        <a class="navlink navlink--danger" href="index.html" id="pnav-logout"><span data-ico="logout"></span>Logout</a>
+        <a class="navlink navlink--danger" href="index.html" id="pnav-logout" aria-label="Lock Portal" title="Lock Portal"><span data-ico="lock"></span>Lock Portal</a>
       </div>
     </div>
   </nav>
@@ -57,16 +118,20 @@
   <main class="ppage">
 
     <header class="phead">
-      <div class="phead__top">
-        <span class="badge">Caregiver Portal</span>
+      <div class="phead__row">
+        <div class="phead__copy">
+          <h1 id="page-title"><span class="phead__icon" id="page-icon" aria-hidden="true">🏠</span>Dashboard ng Tagapag-alaga</h1>
+          <p id="page-sub">Buod ng komunikasyon ni Jems.</p>
+        </div>
+        <div class="phead__actions" id="page-actions"></div>
       </div>
-      <h1 id="page-title">Caregiver Dashboard</h1>
-      <p id="page-sub">Monitor the communicator, connection, location context and board performance.</p>
+      <div class="phead__rule"></div>
     </header>
 
     <div class="pbody">
       <div class="view" id="view-dashboard"  role="region" aria-label="Dashboard"></div>
-      <div class="view" id="view-profile"    role="region" aria-label="Age and profile settings" hidden></div>
+      <div class="view" id="view-profile"   role="region" aria-label="Communicator profile" hidden></div>
+      <div class="view" id="view-settings"   role="region" aria-label="Caregiver and board settings" hidden></div>
       <div class="view" id="view-vocabulary" role="region" aria-label="Custom vocabulary" hidden></div>
       <div class="view" id="view-geofencing" role="region" aria-label="Geofencing" hidden></div>
       <div class="view" id="view-analytics"  role="region" aria-label="Analytics" hidden></div>
@@ -91,9 +156,148 @@
   });
 
   /* Task 3 — the portal is gated behind a 4-digit PIN. */
-  CC.Pin.mount();
-  CC.Pin.open(function () {
-    CC.Portal.init();
+  /* Role selection is a UI prototype; the local caregiver portal still uses its PIN gate. */
+  document.querySelectorAll('[data-workspace]').forEach(function (button) {
+    button.addEventListener('click', function () {
+      if (button.dataset.workspace === 'admin') {
+        document.getElementById('role-picker').hidden = true;
+        document.getElementById('admin-signin').hidden = false;
+        return;
+      }
+      document.getElementById('role-picker').hidden = true;
+      document.getElementById('caregiver-portal').hidden = false;
+      document.querySelector('.pnav__sub').textContent = 'CAREGIVER / SPED TEACHER PORTAL';
+      CC.Pin.mount();
+      CC.Pin.open(function () { CC.Portal.init(); });
+    });
+  });
+  document.getElementById('admin-back').addEventListener('click', function () {
+    document.getElementById('admin-preview').hidden = true;
+    document.getElementById('role-picker').hidden = false;
+  });
+  document.getElementById('admin-signin-back').addEventListener('click', function () {
+    document.getElementById('admin-signin').hidden = true;
+    document.getElementById('role-picker').hidden = false;
+  });
+  document.getElementById('admin-preview-form').addEventListener('submit', function (event) {
+    event.preventDefault();
+    renderAdminAccounts();
+    document.getElementById('admin-signin').hidden = true;
+    document.getElementById('admin-preview').hidden = false;
+  });
+
+  var ADMIN_ACCOUNTS_KEY = 'communicare.admin.accounts.v1';
+  var ADMIN_SAMPLE_ACCOUNTS = [
+    { id: 'sample-alex', name: 'Alex Rivera', email: 'alex@example.org', workspace: 'Rivera family', role: 'Caregiver', status: 'Active' },
+    { id: 'sample-jamie', name: 'Jamie Lee', email: 'jamie@example.org', workspace: 'Bright Path School', role: 'SPED teacher', status: 'Active' },
+    { id: 'sample-sam', name: 'Sam Taylor', email: 'sam@example.org', workspace: 'Northside Clinic', role: 'Caregiver', status: 'Invitation pending' },
+    { id: 'sample-priya', name: 'Priya Santos', email: 'priya@example.org', workspace: 'Harbor Family', role: 'Caregiver', status: 'Invitation pending' },
+    { id: 'sample-morgan', name: 'Morgan Chen', email: 'morgan@example.org', workspace: 'Maple Grove School', role: 'SPED teacher', status: 'Active' },
+    { id: 'sample-jordan', name: 'Jordan Kim', email: 'jordan@example.org', workspace: 'Lakeside Clinic', role: 'SPED teacher', status: 'Inactive' },
+    { id: 'sample-casey', name: 'Casey Brown', email: 'casey@example.org', workspace: 'Sunrise Learning Center', role: 'SPED teacher', status: 'Active' }
+  ];
+  var adminAccountDialog = document.getElementById('admin-account-dialog');
+  var adminAccountsMemory = null;
+  function getAdminAccounts() {
+    try {
+      var saved = localStorage.getItem(ADMIN_ACCOUNTS_KEY);
+      if (saved) {
+        var parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) {
+          var changed = false;
+          ADMIN_SAMPLE_ACCOUNTS.forEach(function (sample) {
+            if (!parsed.some(function (account) { return account.id === sample.id; })) { parsed.push(Object.assign({}, sample)); changed = true; }
+          });
+          adminAccountsMemory = parsed;
+          if (changed) localStorage.setItem(ADMIN_ACCOUNTS_KEY, JSON.stringify(parsed));
+          return parsed;
+        }
+      }
+      if (!adminAccountsMemory) adminAccountsMemory = ADMIN_SAMPLE_ACCOUNTS.map(function (account) { return Object.assign({}, account); });
+      localStorage.setItem(ADMIN_ACCOUNTS_KEY, JSON.stringify(adminAccountsMemory));
+    } catch (error) {
+      if (!adminAccountsMemory) adminAccountsMemory = ADMIN_SAMPLE_ACCOUNTS.map(function (account) { return Object.assign({}, account); });
+    }
+    return adminAccountsMemory;
+  }
+  function escapeAdminText(value) {
+    return String(value || '').replace(/[&<>"']/g, function (character) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[character];
+    });
+  }
+  function renderAdminAccounts() {
+    var accounts = getAdminAccounts();
+    var body = document.getElementById('admin-accounts-body');
+    var active = accounts.filter(function (account) { return account.status === 'Active'; }).length;
+    var pending = accounts.filter(function (account) { return account.status === 'Invitation pending'; }).length;
+    var workspaces = {};
+    accounts.forEach(function (account) { workspaces[String(account.workspace || '').toLowerCase()] = true; });
+    document.getElementById('admin-workspace-count').textContent = Object.keys(workspaces).length;
+    document.getElementById('admin-active-count').textContent = active;
+    document.getElementById('admin-pending-count').textContent = pending;
+    body.innerHTML = accounts.length ? accounts.map(function (account) {
+      var statusClass = account.status === 'Active' ? '' : account.status === 'Inactive' ? ' admin-status--inactive' : ' admin-status--pending';
+      return '<tr><td>' + escapeAdminText(account.name) + '</td><td>' + escapeAdminText(account.email) + '</td><td>' + escapeAdminText(account.workspace) + '</td><td>' + escapeAdminText(account.role) + '</td><td><span class="admin-status' + statusClass + '">' + escapeAdminText(account.status) + '</span></td><td class="admin-account-actions"><button class="btn btn--sm" type="button" data-account-edit="' + escapeAdminText(account.id) + '">Edit</button><button class="btn btn--sm" type="button" data-account-delete="' + escapeAdminText(account.id) + '">Delete</button></td></tr>';
+    }).join('') : '<tr><td colspan="6" class="admin-accounts-empty">No accounts yet. Add an account to get started.</td></tr>';
+  }
+  function openAdminAccount(account) {
+    var form = document.getElementById('admin-account-form');
+    form.reset();
+    document.getElementById('admin-account-error').hidden = true;
+    document.getElementById('admin-account-id').value = account ? account.id : '';
+    document.getElementById('admin-account-name').value = account ? account.name : '';
+    document.getElementById('admin-account-email').value = account ? account.email : '';
+    document.getElementById('admin-account-workspace').value = account ? account.workspace : '';
+    document.getElementById('admin-account-role').value = account ? account.role : 'Caregiver';
+    document.getElementById('admin-account-status').value = account ? account.status : 'Invitation pending';
+    document.getElementById('admin-account-title').textContent = account ? 'Edit account' : 'Add account';
+    adminAccountDialog.showModal();
+    document.getElementById('admin-account-name').focus({ preventScroll: true });
+  }
+  document.getElementById('admin-add-account').addEventListener('click', function () { openAdminAccount(null); });
+  document.getElementById('admin-account-close').addEventListener('click', function () { adminAccountDialog.close(); });
+  document.getElementById('admin-account-cancel').addEventListener('click', function () { adminAccountDialog.close(); });
+  adminAccountDialog.addEventListener('click', function (event) { if (event.target === adminAccountDialog) adminAccountDialog.close(); });
+  document.getElementById('admin-accounts-body').addEventListener('click', function (event) {
+    var editButton = event.target.closest('[data-account-edit]');
+    var deleteButton = event.target.closest('[data-account-delete]');
+    var accounts = getAdminAccounts();
+    if (editButton) {
+      var account = accounts.filter(function (item) { return item.id === editButton.dataset.accountEdit; })[0];
+      if (account) openAdminAccount(account);
+    }
+    if (deleteButton) {
+      var accountToDelete = accounts.filter(function (item) { return item.id === deleteButton.dataset.accountDelete; })[0];
+      if (accountToDelete && window.confirm('Delete the account for ' + accountToDelete.name + '?')) {
+        accounts = accounts.filter(function (item) { return item.id !== accountToDelete.id; });
+        adminAccountsMemory = accounts;
+        try { localStorage.setItem(ADMIN_ACCOUNTS_KEY, JSON.stringify(accounts)); } catch (error) { /* continue with this page */ }
+        renderAdminAccounts();
+      }
+    }
+  });
+  document.getElementById('admin-account-form').addEventListener('submit', function (event) {
+    event.preventDefault();
+    var accounts = getAdminAccounts();
+    var id = document.getElementById('admin-account-id').value;
+    var email = document.getElementById('admin-account-email').value.trim();
+    var duplicate = accounts.some(function (account) { return account.email.toLowerCase() === email.toLowerCase() && account.id !== id; });
+    var error = document.getElementById('admin-account-error');
+    if (duplicate) { error.textContent = 'An account already uses this email address.'; error.hidden = false; return; }
+    var account = {
+      id: id || 'account-' + Date.now().toString(36),
+      name: document.getElementById('admin-account-name').value.trim(),
+      email: email,
+      workspace: document.getElementById('admin-account-workspace').value.trim(),
+      role: document.getElementById('admin-account-role').value,
+      status: document.getElementById('admin-account-status').value
+    };
+    var index = accounts.findIndex(function (item) { return item.id === id; });
+    if (index < 0) accounts.unshift(account); else accounts[index] = account;
+    adminAccountsMemory = accounts;
+    try { localStorage.setItem(ADMIN_ACCOUNTS_KEY, JSON.stringify(accounts)); } catch (storageError) { /* page remains usable for this session */ }
+    adminAccountDialog.close();
+    renderAdminAccounts();
   });
 </script>
 </body>

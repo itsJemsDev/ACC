@@ -1,0 +1,11 @@
+ARASAAC pictogram attribution
+
+The unmodified pictograms in this folder were created by Sergio Palao and are
+the property of the Government of Aragón. Source: ARASAAC
+(https://arasaac.org/). The images are distributed under the Creative Commons
+BY-NC-SA license. This project uses them for non-commercial educational use.
+
+License and use terms: https://arasaac.org/terms-of-use
+
+Pictogram files are named with their ARASAAC pictogram ID. They are loaded
+locally by assets/js/symbols.js and credited in index.html.
